@@ -39,7 +39,7 @@ canvas = Canvas(root, bg='black', highlightthickness=0)
 canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на весь экран
 
 # Установки ГТУ
-margin = 10  # Отступы
+margin = w * 0.02  # Отступы
 size = 150   # Размер
 x = 10       # Начальная координата X
 y = 10       # Начальная координата Y
