@@ -39,19 +39,21 @@ canvas = Canvas(root, bg='black', highlightthickness=0)
 canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на весь экран
 
 # Установки ГТУ
-margin = 10 #Отступы
-size = 150 #Размер
-x = 10
-y = 10
+margin = 10  # Отступы
+size = 150   # Размер
+x = 10       # Начальная координата X
+y = 10       # Начальная координата Y
+
+
 canvas.create_rectangle(x, y, x + size, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + size + margin, y, x + (size * 2) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 2) + margin * 2, y, x + (size * 3) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 3) + margin * 2, y, x + (size * 4) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 4) + margin * 2, y, x + (size * 5) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 5) + margin * 2, y, x + (size * 6) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 6) + margin * 2, y, x + (size * 7) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 7) + margin * 2, y, x + (size * 8) + margin, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size * 8) + margin * 2, y, x + (size * 9) + margin, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*1, y, x + size + (size + margin)*1, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*2, y, x + size + (size + margin)*2, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*3, y, x + size + (size + margin)*3, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*4, y, x + size + (size + margin)*4, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*5, y, x + size + (size + margin)*5, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*6, y, x + size + (size + margin)*6, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*7, y, x + size + (size + margin)*7, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*8, y, x + size + (size + margin)*8, y + size, fill='blue', outline='white')
 
 
 
