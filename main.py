@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
 
-
+is_fullscreen = False
 root = Tk()
  
 root.title('Визуализация системы')
@@ -14,11 +14,10 @@ h = root.winfo_screenheight()
 root.geometry(f'{w}x{h}+0+0')
 
 
-def fullscreen_on(event):
-    root.attributes('-fullscreen', True)
-
-def fullscreen_off(event):
-    root.attributes('-fullscreen', False)
+def fullscreen(event):
+    global is_fullscreen
+    is_fullscreen = not is_fullscreen
+    root.attributes('-fullscreen', is_fullscreen)
 
 def open_file():
     filepath = askopenfilename()
@@ -31,8 +30,7 @@ def open_file():
                 showerror("Ошибка!", "Ошибка при чтении файла.")
 
 
-root.bind('<f>', fullscreen_on)
-root.bind('<Escape>', fullscreen_off)
+root.bind('<F11>', fullscreen)
 
 # Создаем холст (Canvas) для рисования
 canvas = Canvas(root, bg='black', highlightthickness=0)
