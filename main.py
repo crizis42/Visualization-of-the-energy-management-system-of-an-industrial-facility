@@ -6,6 +6,7 @@ from tkinter.messagebox import showinfo, showerror
 root = Tk()
  
 root.title('Визуализация системы')
+root['bg'] = 'black'
 
 w = root.winfo_screenwidth()
 h = root.winfo_screenheight()
@@ -30,7 +31,7 @@ def open_file():
                 showerror("Ошибка!", "Ошибка при чтении файла.")
 
 
-root.bind('<F11>', fullscreen_on)
+root.bind('<f>', fullscreen_on)
 root.bind('<Escape>', fullscreen_off)
 
 # Создаем холст (Canvas) для рисования
@@ -50,7 +51,7 @@ square1 = canvas.create_rectangle(1600, 0, 1800, 200, fill='red', outline='white
 
 
 
-download_button = Button(root, text='Загрузить данные', bg='white')
-download_button.place(x=w-120,y=h)
+download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
+download_button.place(relx=0.95, rely=0.95, anchor=SE) #использовал rely relx
 
 root.mainloop()
