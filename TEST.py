@@ -1,8 +1,8 @@
-#ЗДЕСЬ Я ТЕСТИРУЮ РАБОТУ С ТКИНТЕРОМ
+#ЗДЕСЬ Я ТЕСТИРУЮ РАБОТУ ТКИНТЕРА
 
 from tkinter import *
 if __name__ == '__main__':
-  #выполнение кода до загрузки
+  
   root = Tk()
-  root.title('My App') #заголовок
-  root.mainloop() #отображение окна
+  root.title('My App') 
+  root.mainloop()
