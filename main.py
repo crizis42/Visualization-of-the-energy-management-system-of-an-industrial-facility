@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
+from PIL import Image, ImageTk
 
 is_fullscreen = False
 root = Tk()
@@ -29,6 +30,13 @@ def open_file():
             except Exception:
                 showerror("Ошибка!", "Ошибка при чтении файла.")
 
+# Загрузка и масштабирование изображения
+def load_scaled_image(path, size):
+    img = Image.open(path)
+    img = img.resize((int(size), int(size)), Image.LANCZOS) 
+    return ImageTk.PhotoImage(img)
+
+####################################################################################
 
 root.bind('<F11>', fullscreen)
 
@@ -42,31 +50,33 @@ sizeG = w * 0.09  # Размер
 xG = 10       # Начальная координата X
 yG = 10       # Начальная координата Y
 
-canvas.create_rectangle(xG, yG, xG + sizeG, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*1, yG, xG + sizeG + (sizeG + marginG)*1, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*2, yG, xG + sizeG + (sizeG + marginG)*2, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*3, yG, xG + sizeG + (sizeG + marginG)*3, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*4, yG, xG + sizeG + (sizeG + marginG)*4, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*5, yG, xG + sizeG + (sizeG + marginG)*5, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*6, yG, xG + sizeG + (sizeG + marginG)*6, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*7, yG, xG + sizeG + (sizeG + marginG)*7, yG + sizeG, fill='blue', outline='white')
-canvas.create_rectangle(xG + (sizeG + marginG)*8, yG, xG + sizeG + (sizeG + marginG)*8, yG + sizeG, fill='blue', outline='white')
+gtu_on = load_scaled_image("GTU_on.png", sizeG)
+
+# Создаем 9 изображений ГТУ
+img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
+img2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
+img3 = canvas.create_image(xG + (sizeG + marginG)*2, yG, image=gtu_on, anchor="nw")
+img4 = canvas.create_image(xG + (sizeG + marginG)*3, yG, image=gtu_on, anchor="nw")
+img5 = canvas.create_image(xG + (sizeG + marginG)*4, yG, image=gtu_on, anchor="nw")
+img6 = canvas.create_image(xG + (sizeG + marginG)*5, yG, image=gtu_on, anchor="nw")
+img7 = canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="nw")
+img8 = canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw")
+img9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw")
 
 marginB = w * 0.02  # Отступы
 sizeB = w * 0.09  # Размер
 xB = 10       # Начальная координата X
 yB = 250       # Начальная координата Y
 
-canvas.create_rectangle(xB, yB, xB + sizeB, yB + sizeB, fill='blue', outline='white')
-canvas.create_rectangle(xB + (sizeB + marginB)*1, yB, xB + sizeB + (sizeB + marginB)*1, yB + sizeB, fill='blue', outline='white')
-canvas.create_rectangle(xB + (sizeB + marginB)*2, yB, xB + sizeB + (sizeB + marginB)*2, yB + sizeB, fill='blue', outline='white')
-canvas.create_rectangle(xB + (sizeB + marginB)*3, yB, xB + sizeB + (sizeB + marginB)*3, yB + sizeB, fill='blue', outline='white')
-canvas.create_rectangle(xB + (sizeB + marginB)*4, yB, xB + sizeB + (sizeB + marginB)*4, yB + sizeB, fill='blue', outline='white')
-canvas.create_rectangle(xB + (sizeB + marginB)*5, yB, xB + sizeB + (sizeB + marginB)*5, yB + sizeB, fill='blue', outline='white')
+boiler_on = load_scaled_image("boiler_on.png", sizeG)
 
-
-
-
+# Создаем 6 изображений Котлов
+img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
+img2 = canvas.create_image(xB + (sizeB + marginB)*1, yB, image=boiler_on, anchor="nw")
+img3 = canvas.create_image(xB + (sizeB + marginB)*2, yB, image=boiler_on, anchor="nw")
+img4 = canvas.create_image(xB + (sizeB + marginB)*3, yB, image=boiler_on, anchor="nw")
+img5 = canvas.create_image(xB + (sizeB + marginB)*4, yB, image=boiler_on, anchor="nw")
+img6 = canvas.create_image(xB + (sizeB + marginB)*5, yB, image=boiler_on, anchor="nw")
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(relx=0.95, rely=0.95, anchor=SE) #использовал rely relx
