@@ -37,20 +37,26 @@ canvas = Canvas(root, bg='black', highlightthickness=0)
 canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на весь экран
 
 # Установки ГТУ
-gap = w*0.05
-square1 = canvas.create_rectangle(0, 0, 200, 200, fill='blue', outline='white')
-square2 = canvas.create_rectangle(200, 0, 400, 200, fill='red', outline='white')
-square3 = canvas.create_rectangle(400, 0, 600, 200, fill='red', outline='white')
-square4 = canvas.create_rectangle(600, 0, 800, 200, fill='red', outline='white')
-square5 = canvas.create_rectangle(800, 0, 1000, 200, fill='red', outline='white')
-square6 = canvas.create_rectangle(1000, 0, 1200, 200, fill='red', outline='white')
-square7 = canvas.create_rectangle(1200, 0, 1400, 200, fill='red', outline='white')
-square8 = canvas.create_rectangle(1400, 0, 1600, 200, fill='red', outline='white')
-square9 = canvas.create_rectangle(1600, 0, 1800, 200, fill='red', outline='white')
+margin = w * 0.02  # Отступы
+size = 150   # Размер
+x = 10       # Начальная координата X
+y = 10       # Начальная координата Y
+
+
+canvas.create_rectangle(x, y, x + size, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*1, y, x + size + (size + margin)*1, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*2, y, x + size + (size + margin)*2, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*3, y, x + size + (size + margin)*3, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*4, y, x + size + (size + margin)*4, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*5, y, x + size + (size + margin)*5, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*6, y, x + size + (size + margin)*6, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*7, y, x + size + (size + margin)*7, y + size, fill='blue', outline='white')
+canvas.create_rectangle(x + (size + margin)*8, y, x + size + (size + margin)*8, y + size, fill='blue', outline='white')
+
+
 
 
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(relx=0.95, rely=0.95, anchor=SE) #использовал rely relx
-
 root.mainloop()
