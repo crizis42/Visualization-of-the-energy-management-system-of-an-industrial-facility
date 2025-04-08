@@ -39,21 +39,32 @@ canvas = Canvas(root, bg='black', highlightthickness=0)
 canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на весь экран
 
 # Установки ГТУ
-margin = w * 0.02  # Отступы
-size = 150   # Размер
-x = 10       # Начальная координата X
-y = 10       # Начальная координата Y
+marginG = w * 0.02  # Отступы
+sizeG = w * 0.09  # Размер
+xG = 10       # Начальная координата X
+yG = 10       # Начальная координата Y
 
+canvas.create_rectangle(xG, yG, xG + sizeG, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*1, yG, xG + sizeG + (sizeG + marginG)*1, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*2, yG, xG + sizeG + (sizeG + marginG)*2, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*3, yG, xG + sizeG + (sizeG + marginG)*3, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*4, yG, xG + sizeG + (sizeG + marginG)*4, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*5, yG, xG + sizeG + (sizeG + marginG)*5, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*6, yG, xG + sizeG + (sizeG + marginG)*6, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*7, yG, xG + sizeG + (sizeG + marginG)*7, yG + sizeG, fill='blue', outline='white')
+canvas.create_rectangle(xG + (sizeG + marginG)*8, yG, xG + sizeG + (sizeG + marginG)*8, yG + sizeG, fill='blue', outline='white')
 
-canvas.create_rectangle(x, y, x + size, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*1, y, x + size + (size + margin)*1, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*2, y, x + size + (size + margin)*2, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*3, y, x + size + (size + margin)*3, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*4, y, x + size + (size + margin)*4, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*5, y, x + size + (size + margin)*5, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*6, y, x + size + (size + margin)*6, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*7, y, x + size + (size + margin)*7, y + size, fill='blue', outline='white')
-canvas.create_rectangle(x + (size + margin)*8, y, x + size + (size + margin)*8, y + size, fill='blue', outline='white')
+marginB = w * 0.02  # Отступы
+sizeB = w * 0.09  # Размер
+xB = 10       # Начальная координата X
+yB = 250       # Начальная координата Y
+
+canvas.create_rectangle(xB, yB, xB + sizeB, yB + sizeB, fill='blue', outline='white')
+canvas.create_rectangle(xB + (sizeB + marginB)*1, yB, xB + sizeB + (sizeB + marginB)*1, yB + sizeB, fill='blue', outline='white')
+canvas.create_rectangle(xB + (sizeB + marginB)*2, yB, xB + sizeB + (sizeB + marginB)*2, yB + sizeB, fill='blue', outline='white')
+canvas.create_rectangle(xB + (sizeB + marginB)*3, yB, xB + sizeB + (sizeB + marginB)*3, yB + sizeB, fill='blue', outline='white')
+canvas.create_rectangle(xB + (sizeB + marginB)*4, yB, xB + sizeB + (sizeB + marginB)*4, yB + sizeB, fill='blue', outline='white')
+canvas.create_rectangle(xB + (sizeB + marginB)*5, yB, xB + sizeB + (sizeB + marginB)*5, yB + sizeB, fill='blue', outline='white')
 
 
 
