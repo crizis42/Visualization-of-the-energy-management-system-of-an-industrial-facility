@@ -1,13 +1,14 @@
-from tkinter import *
-from tkinter.filedialog import askopenfilenames
-from tkinter.messagebox import showinfo, showerror
-from PIL import Image, ImageTk 
 import ctypes #Подключаем типы из С/С++
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
-#from boilers import UtilizationBoiler, heat_from_temp, heat_load_distribution, heat_cost
+import math
+import numpy
 import pandas as pd
-import numpy as np
+from PIL import Image, ImageTk 
+import random
+from tkinter import *
+from tkinter.filedialog import askopenfilenames
+from tkinter.messagebox import showinfo, showerror
 
 
 is_fullscreen = False
@@ -49,20 +50,14 @@ def open_excel_files():
         return  # Если ничего не выбрали — выходим из функции
 
     try:
-        if len(filepaths) != 3:
-            showerror("Ошибка!", "Необходимо выбрать ровно 3 Excel файла!")
-            return
-
         # Объявляем переменные глобальными
         global energy_usage_data, gtu_data, gas_data, months, gas_prices
 
         # Пути к выбранным файлам
-        energy_usage_path = filepaths[0]
-        gtu_path = filepaths[1]
-        gas_path = filepaths[2]
+        gtu_path = filepaths[0]
+        gas_path = filepaths[1]
 
         # Загружаем данные
-        energy_usage_data = pd.read_excel(energy_usage_path)
         gtu_data = pd.read_excel(gtu_path)
         gas_data = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
 
@@ -72,7 +67,6 @@ def open_excel_files():
         gas_prices = gas_data.loc[2, 1:last_col].to_numpy()  # Цены на газ
 
         print("Файлы успешно загружены!")
-        print("energy_usage_data:\n", energy_usage_data.head())
         print("gtu_data:\n", gtu_data.head())
         print("gas_prices:\n", gas_prices)
 
@@ -240,7 +234,8 @@ class UtilizationBoiler:
         Уровень загрузки: {self.load} % / {self.heat_otpt()} Гкал
         Состояние вкл/выкл: {self.status}
         '''
-    
+
+last_5_temps = [None, None, None, None, None]   
 def heat_from_temp(temp):
     """
     Функция потребности тепла в зависимости от отрицательной температуры воздуха 
@@ -250,8 +245,14 @@ def heat_from_temp(temp):
     на улице держится ниже +8 °C в течение 5 дней подряд
     """
     heat_need = 0
-    
-    if temp < 8:
+    global last_5_temps
+
+    last_5_temps.append(temp)
+
+    if len(last_5_temps) > 5:
+        last_5_temps.pop(0)
+
+    if None not in last_5_temps and all(t < 8 for t in last_5_temps):
         # кубическая регрессия от x: 0 -10 -24 -38 -48; y: 1.126 2.345 5.63 8.914 11.26;
         heat_need = float(format(
                                 (0.00006180 * temp ** 3 + 0.00559107 * temp ** 2 - 0.08512969 * temp + 1.09309420), '.3f'
@@ -355,6 +356,220 @@ def boilers_initialization():
         BLR_info(boiler.num + 1, boiler.load, boiler.pwr, boiler.status)
 
 
+class GTU:
+    def __init__(self, n):
+        self.n = n # номер ГТУ
+        self.power = 16 # номинальная мощность
+        self.load = 1 # уровень загрузки (о.е.)
+        self.to = 1500 # моточасы до ТО
+        self.kr = 10000 # моточасы до КР
+        self.state = 0 # состояние 0-выкл/1-вкл/2-ТО или КР
+        self.service_time = 0 # время сервисного обслуживания: 14 дней для ТО и 30 дней для КР
+    
+    def stop_to(self):
+        self.state = 2
+        self.service_time = 14
+        self.to = 1500
+        
+    def stop_kr(self):
+        self.state = 2
+        self.service_time = 30
+        self.to = 1500
+        self.kr = 10000
+        
+    def stop_n(self):
+        self.state = 0
+        self.to = self.to - 2.5
+        self.kr = self.kr - 2.5
+        
+    def start_n(self):
+        self.state = 1
+        self.to = self.to - 2.5
+        self.kr = self.kr - 2.5
+    
+    def __str__(self):
+        return f'''
+        номер ГТУ {self.n}
+        номинальная мощность {self.power}
+        уровень загрузки (о.е.) {self.load}
+        моточасы до ТО {self.to}
+        моточасы до КР {self.kr}
+        состояние вкл/выкл {self.state}
+        '''
+    
+def hourly_production(load):
+    x = load
+    y = -1.6667*x**3+3.3333*x*x-1.1833*x+0.5167 # кубическая регрессия для нахождения отношения мч/ч
+    
+    return y
+
+def get_power_loss(temp, season):
+    base_node_voltage = 11 # напряжение базисного узла, кВ
+    rated_voltage = 10 # номинальное напряжение сети, кВ
+    
+    node_type = ['base'] # тип узла
+    number_of_circuits = [] # количество цепей, шт.
+    
+    for i in range(32):
+        node_type.append('load')
+        number_of_circuits.append(2)
+        
+    r0 = 0.245/(1+0.00403*(20-temp)) # скорректированное на текущую температуру погонное сопротивление АС-120/19
+    x0 = 0.38
+    
+    line_lengths = [0.5, 3, 3.5, 4, 100, 1, 2, 3, 3.3, 4, 4.5, 5, 5.2, 5.7, 6, 6.5, 7, 7.5, 7.8, 8, 8.5, 9, 9.3,
+                   9.7, 17, 18, 20, 22, 23, 24, 25, 0.3] # длины линий
+    
+    linear_active_resistance = [ll*r0 for ll in line_lengths] # активное сопротивление ветвей, Ом
+    linear_reactive_resistance = [ll*x0 for ll in line_lengths] # реактивное сопротивление ветвей, Ом
+    
+    starting_point = [0 for i in range(32)] # номер узла, где ветвь начинается
+    end_point = [i for i in range(1, 33)] # номер узла, где ветвь заканчивается
+    
+    # исходные данные узлов: нагрезка <0; источник >0
+    power = [30, 9, 2, 3, 10, 0.7, 0.8, 0.5, 0.9, 1, 0.9, 0.5, 1, 1.3, 1, 0.8, 0.6, 0.8, 1, 1, 0.7, 1, 0.8, 1,
+        1.1, 1, 2.2, 1.4, 1.2, 1.3, 1.4, 22] # нагрузки узлов
+    
+    sn_summer = [90, 80, 100, 100, 100]
+    for i in range(26):
+        sn_summer.append(50)
+    sn_summer.append(70)
+    
+    sn_winter = [95, 90]
+    for i in range(29):
+        sn_winter.append(100)
+    sn_winter.append(55)
+    
+    if season == "summer":
+        sn = sn_summer
+    else:
+        sn = sn_winter
+    
+    s = [] # полная мощность узлов, МВА
+    for i, pow in enumerate(power):
+        p = pow * sn[i] / 100
+        q = p * math.tan(math.acos(0.97))
+        s.append(-complex(p, q))
+    
+    number_of_nodes = len(s)+1 # количество узлов + 1 базисный
+    number_of_branches = len(starting_point) # количество ветвей
+    base_node_number = node_type.index('base') # номер базисного узла
+    
+    u=[base_node_voltage+0*1j for i in range(number_of_nodes-1)] # начальные приближения напряжений
+    
+    # составление первой матрицы инциденций
+    M_sum = [[0 for j in range(number_of_branches)] for i in range(number_of_nodes)]
+    for i in range(number_of_branches):
+        M_sum[starting_point[i]][i] = 1
+        M_sum[end_point[i]][i] = -1
+        
+    # составление матрицы М, не содержащей базисного угла (удалена 0 строка)
+    M = M_sum
+    M = numpy.delete(M, base_node_number, axis=0)
+    
+    # формирование матрицы сопротивлений ветвей (диагональная)
+    z_branches = [[0 for j in range(number_of_branches)] for i in range(number_of_branches)]
+    for i in range(number_of_branches):
+        z_branches[i][i]=linear_active_resistance[i]+linear_reactive_resistance[i]*1j
+        
+    # формирование матрицы узловых проводимостей
+    y_nodes = M.dot(numpy.linalg.inv(z_branches)).dot(M.transpose())
+    
+    # матрица сопротивлений узлов
+    z_nodes = numpy.linalg.inv(y_nodes)
+    
+    # формирование матрицы узловых токов
+    node_current = []
+    for i in range(number_of_nodes-1):
+        node_current.append(s[i].conjugate()/rated_voltage.conjugate())
+        
+    # расчет напряжений в узлах
+    result_u = u+z_nodes.dot(node_current)
+    result_u = numpy.insert(result_u, base_node_number, base_node_voltage)
+    result_abs_u = abs(result_u)
+    
+    # расчет токов в линиях
+    result_i = numpy.linalg.inv(z_branches).dot((numpy.transpose(M_sum)).dot(result_u))/3**0.5
+    abs_result_i = abs(result_i)
+    
+    # расчет потерь в линиях
+    dp = []
+    for i in range(len(linear_active_resistance)):
+        I = abs_result_i[i]
+        dp.append((I)**2*3*linear_active_resistance[i])
+    
+    return sum(dp)
+
+def gtu_initialization():
+    gtes = [GTU(i) for i in range(9)] # задаётся из файла
+
+    for gtu in gtes:
+        gtu.to = random.randint(0, 1500)
+        gtu.kr = random.randint(0, 10000)
+
+    current_datetime = datetime.datetime.now() # текущая дата
+    custom_datetime_1 = 6
+    custom_datetime_2 = 10
+    current_season = None
+    if 6<= current_datetime.month <10:
+        current_season = 'summer'
+    else:
+        current_season = 'winter'
+
+    # определение мощности потребления
+    p_sum = None
+    if current_season == 'summer':
+        p_sum = 77.6
+    else:
+        p_sum = 89.7
+    p_sum += get_power_loss(10, current_season)
+
+    n_gtu = math.ceil(p_sum / 16) # определение числа необходимых ГТУ
+    actual_loading = round(p_sum / n_gtu / 16, 2) # определение фактической загрузки ГТУ
+    hp = hourly_production(actual_loading) # определение отношения мч/ч
+    engine_hpd = hp * 24 # наработка за сутки при данной нагрузке
+
+        # отключение ГТУ по состоянию
+    for gtu in gtes:
+        if gtu.state == 1:
+            if gtu.kr-engine_hpd-2.5 <= 0:
+                gtu.stop_kr()
+                # плюс к затратам за КР
+            elif gtu.to-engine_hpd-2.5 <= 0:
+                gtu.stop_to()
+                # плюс к затратам за ТО
+            else:
+                continue
+
+    # отключение ГТУ по количеству n_gtu
+    gtes.sort(key=lambda x: x.kr)
+    n = 0
+    for gtu in gtes:
+        if gtu.state == 1:
+            if n < n_gtu:
+                n += 1
+            else:
+                gtu.stop_n()
+                
+    # запуск ГТУ по количеству n_gtu
+    n = 0
+    for gtu in gtes:
+        if gtu.state == 0:
+            if n < n_gtu:
+                gtu.start_n()
+                n += 1
+
+    # обновление состояний ГТУ по прошествии дня
+    for gtu in gtes:
+        if gtu.state == 1:
+            gtu.to -= engine_hpd
+            gtu.kr -= engine_hpd
+        elif gtu.state == 2:
+            gtu.service_time -= 1
+            if gtu.service_time == 0:
+                gtu.state = 0
+        else:
+            continue
 
 ###################################################################################
 price = None
