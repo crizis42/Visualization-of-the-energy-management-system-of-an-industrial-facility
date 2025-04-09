@@ -51,7 +51,7 @@ xG = 10       # Начальная координата X
 yG = 10       # Начальная координата Y
 
 gtu_on = load_scaled_image("GTU_on.png", sizeG)
-
+    
 # Создаем 9 изображений ГТУ
 img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
 img2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
