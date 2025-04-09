@@ -184,8 +184,8 @@ BLR_hud4 = canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + s
 BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB)
 BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
-button_width = int(w * 0.007)  # Ширина кнопок
-button_height = int(w * 0.0007)  # Высота кнопок
+button_width = 17  # Ширина кнопок
+button_height = 1  # Высота кнопок
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(x=w*0.98, rely=0.94, anchor=NE) #использовал rely relx
