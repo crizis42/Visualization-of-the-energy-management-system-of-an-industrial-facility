@@ -160,7 +160,7 @@ num_blr = 6 # Кол-во котлов
 widthB = num_blr * sizeB + (num_blr - 1) * marginB #Расчитываем ширину
 
 xB = (w - widthB) / 2       # Начальная координата X
-yB = 600       # Начальная координата Y
+yB = w * 0.26     # Начальная координата Y
 
 boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
 
@@ -185,16 +185,16 @@ BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + s
 BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
-download_button.place(relx=0.5285, rely=0.94, anchor=SE) #использовал rely relx
+download_button.place(x=w/2, rely=0.94, anchor=CENTER) #использовал rely relx
 
-previous_date_button = Button(root, text='Предыдущий день', command=previous_date)
-previous_date_button.place(relx=0.08, rely=0.5, anchor=SE,) #Кнопка для переключения на предыдущий день
+previous_date_button = Button(root, text='Предыдущий день')
+previous_date_button.place(x=w*0.02, rely=0.94, anchor=W) #Кнопка для переключения на предыдущий день
 
 previous_month_button = Button(root, text='Предыдущий месяц', command=previous_month)
 previous_month_button.place(relx=0.08, rely=0.55, anchor=SE,) #Кнопка для переключения на предыдущий месяц
 
 next_date_button = Button(root, text='Следующий день', command=next_date)
-next_date_button.place(relx=0.975, rely=0.5, anchor=SE) #Кнопка для переключения на следующий день
+next_date_button.place(x=w*0.98, rely=0.94, anchor=NE) #Кнопка для переключения на следующий день
 
 next_month_button = Button(root, text='Следующий месяц', command=next_month)
 next_month_button.place(relx=0.975, rely=0.55, anchor=SE,) #Кнопка для переключения на следующий месяц
