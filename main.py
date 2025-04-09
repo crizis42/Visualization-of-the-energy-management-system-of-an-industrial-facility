@@ -39,8 +39,8 @@ work_height = rect.bottom - rect.top
 # {ширина}x{высота}+{смещение по X}+{смещение по Y}
 root.geometry(f'{work_width}x{work_height}+{rect.left}+{rect.top}')
 
-w = root.winfo_screenwidth()
-h = root.winfo_screenheight()
+w = work_width
+h = work_height #Переопределение рабочей области
 
 def fullscreen(event):
     global is_fullscreen
