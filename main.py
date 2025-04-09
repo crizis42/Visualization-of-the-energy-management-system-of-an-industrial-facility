@@ -184,22 +184,25 @@ BLR_hud4 = canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + s
 BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB)
 BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
-download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
-download_button.place(x=w/2, rely=0.94, anchor=CENTER) #использовал rely relx
+button_width = int(w * 0.007)  # Ширина кнопок
+button_height = int(w * 0.0007)  # Высота кнопок
 
-previous_date_button = Button(root, text='Предыдущий день', command=previous_date)
+download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
+download_button.place(x=w*0.98, rely=0.94, anchor=NE) #использовал rely relx
+
+previous_date_button = Button(root, text='Предыдущий день', command=previous_date, width=button_width, height=button_height)
 previous_date_button.place(x=w*0.02, rely=0.94, anchor=W) #Кнопка для переключения на предыдущий день
 
-previous_month_button = Button(root, text='Предыдущий месяц', command=previous_month)
-previous_month_button.place(relx=0.08, rely=0.55, anchor=SE,) #Кнопка для переключения на предыдущий месяц
+previous_month_button = Button(root, text='Предыдущий месяц', command=previous_month, width=button_width, height=button_height)
+previous_month_button.place(x=w*0.02, rely=0.918, anchor=W) #Кнопка для переключения на предыдущий месяц
 
-next_date_button = Button(root, text='Следующий день', command=next_date)
-next_date_button.place(x=w*0.98, rely=0.94, anchor=NE) #Кнопка для переключения на следующий день
+next_date_button = Button(root, text='Следующий день', command=next_date, width=button_width, height=button_height)
+next_date_button.place(x=w*0.0722, rely=0.94, anchor=W) #Кнопка для переключения на следующий день
 
-next_month_button = Button(root, text='Следующий месяц', command=next_month)
-next_month_button.place(relx=0.975, rely=0.55, anchor=SE,) #Кнопка для переключения на следующий месяц
+next_month_button = Button(root, text='Следующий месяц', command=next_month, width=button_width, height=button_height)
+next_month_button.place(x=w*0.0722, rely=0.918, anchor=W) #Кнопка для переключения на следующий месяц
 
-label = Label(root, text=current_date.strftime("%d.%m.%Y"), font=("Arial", 20))
-label.place(relx=0.5375, rely=0.5, anchor=SE)
+label = Label(root, text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 35))
+label.place(x=w*0.125, rely=0.93, anchor=W)
 
 root.mainloop()
