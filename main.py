@@ -6,6 +6,8 @@ import pandas as pq # библиотека для excel (pip install pandas open
 import ctypes #Подключаем типы из С/С++
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
+#from boilers import UtilizationBoiler, heat_from_temp, heat_load_distribution, heat_cost
+
 
 # Чтение файла excel 
 exel_1 = pq.read_excel("Excel/1_Данные_по_потреблению_электроэнергии.xlsx")
@@ -68,7 +70,7 @@ def load_scaled_image(path, size):
     return ImageTk.PhotoImage(img)
 
 def update_label():
-    label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 35))
+    date_label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 14, 'bold'))
 
 def next_date():
     global current_date
@@ -108,7 +110,7 @@ xG = (w - widthG) / 2
 yG = w * 0.015       # Начальная координата Y
 
 gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
-     
+    
 # Создаем 9 изображений ГТУ
 GTU1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
 GTU2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
@@ -246,7 +248,7 @@ BLR_huds = {
 }
 
 # Функция для отображения текста в нужных ГТУ
-def GTU_info (num, prcnt, state):
+def BLR_info (num, prcnt, state):
 
     center_x, center_y = BLR_huds[num]["coords"]
     center_x += (w * 0.005)
@@ -270,7 +272,7 @@ def GTU_info (num, prcnt, state):
             font=("Arial", int(h*0.01))
         )
 
-GTU_info (3, 100, "вкл")
+BLR_info (3, 100, "вкл")
 
 # Константы для кнопок управления датой
 BUTTON_WIDTH = 17  # Ширина в символах
@@ -283,10 +285,10 @@ date_control_frame.place(relx=0.02, rely=0.95, anchor=SW)  # Фиксируем 
 
 # Создаем кнопки внутри фрейма
 previous_month_button = Button(date_control_frame, text='Предыдущий месяц', 
-                             command=previous_month, 
-                             width=BUTTON_WIDTH, 
-                             height=BUTTON_HEIGHT,
-                             font=BUTTON_FONT)
+                            command=previous_month, 
+                            width=BUTTON_WIDTH, 
+                            height=BUTTON_HEIGHT,
+                            font=BUTTON_FONT)
 previous_month_button.pack(side=LEFT, padx=5, pady=2)
 
 previous_date_button = Button(date_control_frame, text='Предыдущий день', 
@@ -297,25 +299,25 @@ previous_date_button = Button(date_control_frame, text='Предыдущий д�
 previous_date_button.pack(side=LEFT, padx=5, pady=2)
 
 next_date_button = Button(date_control_frame, text='Следующий день', 
-                         command=next_date, 
-                         width=BUTTON_WIDTH, 
-                         height=BUTTON_HEIGHT,
-                         font=BUTTON_FONT)
+                        command=next_date, 
+                        width=BUTTON_WIDTH, 
+                        height=BUTTON_HEIGHT,
+                        font=BUTTON_FONT)
 next_date_button.pack(side=LEFT, padx=5, pady=2)
 
 next_month_button = Button(date_control_frame, text='Следующий месяц', 
-                          command=next_month, 
-                          width=BUTTON_WIDTH, 
-                          height=BUTTON_HEIGHT,
-                          font=BUTTON_FONT)
+                        command=next_month, 
+                        width=BUTTON_WIDTH, 
+                        height=BUTTON_HEIGHT,
+                        font=BUTTON_FONT)
 next_month_button.pack(side=LEFT, padx=5, pady=2)
 
 # Метка с датой
 date_label = Label(date_control_frame, 
-                  text=current_date.strftime("%d.%m.%Y"), 
-                  fg='white', 
-                  bg='black', 
-                  font=('Arial', 14, 'bold'))
+                text=current_date.strftime("%d.%m.%Y"), 
+                fg='white', 
+                bg='black', 
+                font=('Arial', 14, 'bold'))
 date_label.pack(side=LEFT, padx=10)
 
 # Кнопка загрузки (оставляем в правом нижнем углу)
@@ -326,8 +328,6 @@ download_button = Button(root,
                         font=BUTTON_FONT)
 download_button.place(relx=0.98, rely=0.95, anchor=SE)
 
-# Функция обновления даты (модифицированная)
-def update_label():
-    date_label.config(text=current_date.strftime("%d.%m.%Y"))
 
 root.mainloop()
+
