@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk 
 import pandas as pq # библиотека для excel (pip install pandas openpyxl xlrd)
 
 # Чтение файла excel 
@@ -53,36 +53,88 @@ canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на вес�
 # Установки ГТУ
 marginG = w * 0.02  # Отступы
 sizeG = w * 0.09  # Размер
-xG = 10       # Начальная координата X
-yG = 10       # Начальная координата Y
+num_gtu = 9 # Кол-во ГТУ
+widthG = num_gtu * sizeG + (num_gtu - 1) * marginG #Расчитываем ширину
+
+xG = (w - widthG) / 2
+yG = w * 0.015       # Начальная координата Y
 
 gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
      
 # Создаем 9 изображений ГТУ
-img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
-img2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
-img3 = canvas.create_image(xG + (sizeG + marginG)*2, yG, image=gtu_on, anchor="nw")
-img4 = canvas.create_image(xG + (sizeG + marginG)*3, yG, image=gtu_on, anchor="nw")
-img5 = canvas.create_image(xG + (sizeG + marginG)*4, yG, image=gtu_on, anchor="nw")
-img6 = canvas.create_image(xG + (sizeG + marginG)*5, yG, image=gtu_on, anchor="nw")
-img7 = canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="nw")
-img8 = canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw")
-img9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw")
+GTU1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
+GTU2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
+GTU3 = canvas.create_image(xG + (sizeG + marginG)*2, yG, image=gtu_on, anchor="nw")
+GTU4 = canvas.create_image(xG + (sizeG + marginG)*3, yG, image=gtu_on, anchor="nw")
+GTU5 = canvas.create_image(xG + (sizeG + marginG)*4, yG, image=gtu_on, anchor="nw")
+GTU6 = canvas.create_image(xG + (sizeG + marginG)*5, yG, image=gtu_on, anchor="nw")
+GTU7 = canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="nw")
+GTU8 = canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw")
+GTU9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw")
 
+# Худ для ГТУ
+colorG = "green" #Настройка цвета
+widthG = 3 #Настройка толщины обводки
+shiftG = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
+
+GTU_hud1 = canvas.create_rectangle(xG, yG + shiftG, xG + sizeG, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud2 = canvas.create_rectangle(xG + (sizeG + marginG)*1, yG + shiftG, xG + sizeG + (sizeG + marginG)*1, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud3 = canvas.create_rectangle(xG + (sizeG + marginG)*2, yG + shiftG, xG + sizeG + (sizeG + marginG)*2, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud4 = canvas.create_rectangle(xG + (sizeG + marginG)*3, yG + shiftG, xG + sizeG + (sizeG + marginG)*3, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud5 = canvas.create_rectangle(xG + (sizeG + marginG)*4, yG + shiftG, xG + sizeG + (sizeG + marginG)*4, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud6 = canvas.create_rectangle(xG + (sizeG + marginG)*5, yG + shiftG, xG + sizeG + (sizeG + marginG)*5, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud7 = canvas.create_rectangle(xG + (sizeG + marginG)*6, yG + shiftG, xG + sizeG + (sizeG + marginG)*6, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud8 = canvas.create_rectangle(xG + (sizeG + marginG)*7, yG + shiftG, xG + sizeG + (sizeG + marginG)*7, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_hud9 = canvas.create_rectangle(xG + (sizeG + marginG)*8, yG + shiftG, xG + sizeG + (sizeG + marginG)*8, yG + shiftG + sizeG, outline=colorG, width=widthG)
+
+center_x = xG + sizeG / 2
+center_y = (yG + shiftG) + sizeG / 2
+
+# Создаем текст по центру первого прямоугольника
+canvas.create_text(
+    center_x, 
+    center_y,
+    text="номер ГТУ: \n\
+номинальная мощность: \n\
+уровень загрузки: \n\
+моточасы до ТО: \n\
+моточасы до КР: \n\
+состояние:",  # Ваш текст
+    anchor="center",        # Центрирование относительно точки
+    fill="white",           # Цвет текста
+    font=("Arial", 10)      # Шрифт и размер (опционально)
+)
+
+# Котлы
 marginB = w * 0.08  # Отступы
 sizeB = w * 0.09  # Размер
-xB = 10       # Начальная координата X
-yB = 400       # Начальная координата Y
+num_blr = 6 # Кол-во котлов
+widthB = num_blr * sizeB + (num_blr - 1) * marginB #Расчитываем ширину
+
+xB = (w - widthB) / 2       # Начальная координата X
+yB = 600       # Начальная координата Y
 
 boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
-img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
-img2 = canvas.create_image(xB + (sizeB + marginB)*1, yB, image=boiler_on, anchor="nw")
-img3 = canvas.create_image(xB + (sizeB + marginB)*2, yB, image=boiler_on, anchor="nw")
-img4 = canvas.create_image(xB + (sizeB + marginB)*3, yB, image=boiler_on, anchor="nw")
-img5 = canvas.create_image(xB + (sizeB + marginB)*4, yB, image=boiler_on, anchor="nw")
-img6 = canvas.create_image(xB + (sizeB + marginB)*5, yB, image=boiler_on, anchor="nw")
+BLR1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
+BLR2 = canvas.create_image(xB + (sizeB + marginB)*1, yB, image=boiler_on, anchor="nw")
+BLR3 = canvas.create_image(xB + (sizeB + marginB)*2, yB, image=boiler_on, anchor="nw")
+BLR4 = canvas.create_image(xB + (sizeB + marginB)*3, yB, image=boiler_on, anchor="nw")
+BLR5 = canvas.create_image(xB + (sizeB + marginB)*4, yB, image=boiler_on, anchor="nw")
+BLR6 = canvas.create_image(xB + (sizeB + marginB)*5, yB, image=boiler_on, anchor="nw")
+
+# Худ для Котлов
+colorB = "green" #Настройка цвета
+widthB = 3 #Настройка толщины обводки
+shiftB = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
+
+BLR_hud1 = canvas.create_rectangle(xB, yB + shiftB, xB + sizeB, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_hud2 = canvas.create_rectangle(xB + (sizeB + marginB)*1, yB + shiftB, xB + sizeB + (sizeB + marginB)*1, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_hud3 = canvas.create_rectangle(xB + (sizeB + marginB)*2, yB + shiftB, xB + sizeB + (sizeB + marginB)*2, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_hud4 = canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + sizeB + (sizeB + marginB)*3, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(relx=0.95, rely=0.95, anchor=SE) #использовал rely relx
