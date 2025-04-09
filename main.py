@@ -552,7 +552,7 @@ def gtu_initialization():
     gtes.sort(key=lambda x: x.kr)
     n = 0
     for gtu in gtes:
-        if gtu.state == 1:
+        if gtu.state == 0 and n < n_gtu:
             if n < n_gtu:
                 n += 1
             else:
