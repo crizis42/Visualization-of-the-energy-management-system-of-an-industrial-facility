@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilenames
 from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk 
 import ctypes #Подключаем типы из С/С++
@@ -9,7 +9,6 @@ from dateutil.relativedelta import relativedelta #изменение месяц�
 import pandas as pd
 import numpy as np
 
-gas_path = 'Excel/3_Стоимость_СОГ.xlsx'
 
 is_fullscreen = False
 root = Tk()
@@ -43,16 +42,49 @@ root.geometry(f'{work_width}x{work_height}+{rect.left}+{rect.top}')
 w = work_width
 h = work_height #Переопределение рабочей области
 
+def open_excel_files():
+    filepaths = askopenfilenames(filetypes=[("Excel files", "*.xlsx")])  # Выбираем только .xlsx файлы
+
+    if not filepaths:
+        return  # Если ничего не выбрали — выходим из функции
+
+    try:
+        if len(filepaths) != 3:
+            showerror("Ошибка!", "Необходимо выбрать ровно 3 Excel файла!")
+            return
+
+        # Объявляем переменные глобальными
+        global energy_usage_data, gtu_data, gas_data, months, gas_prices
+
+        # Пути к выбранным файлам
+        energy_usage_path = filepaths[0]
+        gtu_path = filepaths[1]
+        gas_path = filepaths[2]
+
+        # Загружаем данные
+        energy_usage_data = pd.read_excel(energy_usage_path)
+        gtu_data = pd.read_excel(gtu_path)
+        gas_data = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
+
+        # Обработка файла с ценами на газ
+        last_col = gas_data.loc[2, 1:].last_valid_index()  # Последняя заполненная колонка
+        months = gas_data.loc[0, 1:last_col].to_numpy()    # Месяцы
+        gas_prices = gas_data.loc[2, 1:last_col].to_numpy()  # Цены на газ
+
+        print("Файлы успешно загружены!")
+        print("energy_usage_data:\n", energy_usage_data.head())
+        print("gtu_data:\n", gtu_data.head())
+        print("gas_prices:\n", gas_prices)
+
+        showinfo("Успех!", "Файлы успешно загружены!")
+
+    except Exception as e:
+        showerror("Ошибка!", f"Ошибка при загрузке файлов:\n{e}")
+
 # Читаем данные
-df = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
 
-# Определяем количество столбцов с данными (строка 2 начиная с колонки 1)
-last_col = df.loc[2, 1:].last_valid_index()  # Последняя не пустая колонка
 
-# Получаем месяцы и цены
-months = df.loc[0, 1:last_col].to_numpy()
-gas_prices = df.loc[2, 1:last_col].to_numpy()
-price = None
+
 
 current_date = datetime.now().date()
 
@@ -60,36 +92,41 @@ current_date = datetime.now().date()
 current_month = current_date.month
 current_year = current_date.year
 
-def price_calc(current_year, current_month, months, gas_prices, price):
-  if current_year == 2024:
-      if current_month <= len(gas_prices):
-          price = gas_prices[current_month - 1]
-          print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-      else:
-          print('Нет данных на этот месяц')
-  elif current_year == 2025:
-      price = gas_prices[15]
-      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-  elif current_year == 2026:
-      price = gas_prices[16]
-      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-  else:
-      print('Нет данных на этот год')
+def price_calc():
+    global price
+    price = 0  # Сначала обнуляем цену газа
+
+    current_month = current_date.month
+    current_year = current_date.year
+
+    if 'gas_prices' not in globals():
+        print("Цены на газ ещё не загружены.")
+        return
+
+    # Проверяем год и рассчитываем цену только если есть данные
+    if current_year == 2024:
+        if current_month <= len(gas_prices):
+            price = gas_prices[current_month - 1]
+    elif current_year == 2025:
+        price = gas_prices[-1]
+    elif current_year == 2026:
+        price = gas_prices[-1]
+    else:
+        price = 0  # Нет данных на этот год
+
+    # Вывод в терминал
+    if price != 0:
+        print(f'Стоимость газа за {current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
+    else:
+        print(f'Нет данных для расчета стоимости газа за {current_month}.{current_year}')
+
+    
 
 def fullscreen(event):
     global is_fullscreen
     is_fullscreen = not is_fullscreen
     root.attributes('-fullscreen', is_fullscreen)
 
-def open_file():
-    filepath = askopenfilename()
-    if filepath != "":
-        with open(filepath, 'r', encoding='utf8') as file:
-            try:
-                print(filepath)
-                showinfo("Успех!", "Файл успешно загружен.")
-            except Exception:
-                showerror("Ошибка!", "Ошибка при чтении файла.")
 
 # Загрузка и масштабирование изображения
 def load_scaled_image(path, size):
@@ -104,24 +141,28 @@ def next_date():
     global current_date
     current_date += timedelta(days=1)
     update_label()
-
-def next_month():
-    global current_date
-    current_date += relativedelta(months=1)
-    update_label()
+    price_calc()
 
 def previous_date():
     global current_date
     current_date -= timedelta(days=1)
     update_label()
+    price_calc()
+
+def next_month():
+    global current_date
+    current_date += relativedelta(months=1)
+    update_label()
+    price_calc()
 
 def previous_month():
     global current_date
     current_date -= relativedelta(months=1)
     update_label()
+    price_calc()
 
 ###################################################################################
-
+price = None
 root.bind('<F11>', fullscreen)
 
 # Создаем холст (Canvas) для рисования
@@ -352,7 +393,7 @@ date_label.pack(side=LEFT, padx=10)
 download_button = Button(root, 
                         text='Загрузить данные', 
                         bg='white', 
-                        command=open_file,
+                        command=open_excel_files,
                         font=BUTTON_FONT)
 download_button.place(relx=0.98, rely=0.95, anchor=SE)
 

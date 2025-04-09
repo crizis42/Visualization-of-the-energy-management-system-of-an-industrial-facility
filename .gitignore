@@ -16,3 +16,6 @@ tempCodeRunnerFile*
 # System files
 .DS_Store
 Thumbs.db
+
+#xlsx файлы
+*xlsx
