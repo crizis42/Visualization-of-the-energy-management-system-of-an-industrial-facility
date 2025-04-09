@@ -82,22 +82,17 @@ def open_excel_files():
         showerror("Ошибка!", f"Ошибка при загрузке файлов:\n{e}")
 
 # Читаем данные
-
-
-
-
 current_date = datetime.now().date()
-
-# Текущая дата
-current_month = current_date.month
-current_year = current_date.year
 
 def price_calc():
     global price
     price = 0  # Сначала обнуляем цену газа
-
+    
+    # Текущая дата
+    current_day = current_date.day
     current_month = current_date.month
     current_year = current_date.year
+
 
     if 'gas_prices' not in globals():
         print("Цены на газ ещё не загружены.")
@@ -116,7 +111,7 @@ def price_calc():
 
     # Вывод в терминал
     if price != 0:
-        print(f'Стоимость газа за {current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
+        print(f'Стоимость газа на {current_day}.{current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
     else:
         print(f'Нет данных для расчета стоимости газа за {current_month}.{current_year}')
 
