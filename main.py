@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk #pip install pillow
 
 is_fullscreen = False
 root = Tk()
@@ -50,7 +50,7 @@ sizeG = w * 0.09  # Размер
 xG = w*0.015       # Начальная координата X
 yG = h*0.025       # Начальная координата Y
 
-gtu_on = load_scaled_image("GTU_on.png", sizeG)
+gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
     
 # Создаем 9 изображений ГТУ
 img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
@@ -68,7 +68,7 @@ sizeB = w * 0.09  # Размер
 xB = w*0.025     # Начальная координата X
 yB = h*0.44       # Начальная координата Y
 
-boiler_on = load_scaled_image("boiler_on.png", sizeG)
+boiler_on = load_scaled_image("img/boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
 img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
