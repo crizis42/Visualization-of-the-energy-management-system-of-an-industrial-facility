@@ -56,7 +56,7 @@ sizeG = w * 0.09  # Размер
 xG = 10       # Начальная координата X
 yG = 10       # Начальная координата Y
 
-gtu_on = load_scaled_image("GTU_on.png", sizeG)
+gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
      
 # Создаем 9 изображений ГТУ
 img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
@@ -74,7 +74,7 @@ sizeB = w * 0.09  # Размер
 xB = 10       # Начальная координата X
 yB = 400       # Начальная координата Y
 
-boiler_on = load_scaled_image("Boiler_on.png", sizeG)
+boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
 img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
