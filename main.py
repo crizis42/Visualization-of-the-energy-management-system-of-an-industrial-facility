@@ -2,16 +2,16 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk
-import pandas as pq # библиотека для exel (pip install pandas openpyxl xlrd)
+import pandas as pq # библиотека для excel (pip install pandas openpyxl xlrd)
 
 # Чтение файла excel 
-exel_1 = pq.read_excel("1_Данные_по_потреблению_электроэнергии.xlsx")
-exel_2 = pq.read_excel("2_Наработка_ГТЭС.xlsx")
-exel_3 = pq.read_excel("3_Стоимость_СОГ.xlsx")
+#exel_1 = pq.read_excel("1_Данные_по_потреблению_электроэнергии.xlsx")
+#exel_2 = pq.read_excel("2_Наработка_ГТЭС.xlsx")
+#exel_3 = pq.read_excel("3_Стоимость_СОГ.xlsx")
 
 is_fullscreen = False
 root = Tk()
- 
+
 root.title('Визуализация системы')
 root['bg'] = 'black'
 
@@ -74,7 +74,7 @@ sizeB = w * 0.09  # Размер
 xB = 10       # Начальная координата X
 yB = 400       # Начальная координата Y
 
-boiler_on = load_scaled_image("boiler_on.png", sizeG)
+boiler_on = load_scaled_image("Boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
 img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
