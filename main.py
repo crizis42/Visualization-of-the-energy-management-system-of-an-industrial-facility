@@ -36,7 +36,7 @@ def load_scaled_image(path, size):
     img = img.resize((int(size), int(size)), Image.LANCZOS) 
     return ImageTk.PhotoImage(img)
 
-####################################################################################
+###################################################################################
 
 root.bind('<F11>', fullscreen)
 
