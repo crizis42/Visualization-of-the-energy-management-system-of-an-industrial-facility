@@ -77,6 +77,8 @@ def open_excel_files():
         print("gas_prices:\n", gas_prices)
 
         showinfo("Успех!", "Файлы успешно загружены!")
+        set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
+
 
     except Exception as e:
         showerror("Ошибка!", f"Ошибка при загрузке файлов:\n{e}")
@@ -111,9 +113,9 @@ def price_calc():
 
     # Вывод в терминал
     if price != 0:
-        print(f'Стоимость газа на {current_day}.{current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
+        return(f'Стоимость газа на {current_day}.{current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
     else:
-        print(f'Нет данных для расчета стоимости газа за {current_month}.{current_year}')
+        return(f'Нет данных для расчета стоимости газа за {current_month}.{current_year}')
 
     
 
@@ -136,25 +138,25 @@ def next_date():
     global current_date
     current_date += timedelta(days=1)
     update_label()
-    price_calc()
+    set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
 
 def previous_date():
     global current_date
     current_date -= timedelta(days=1)
     update_label()
-    price_calc()
+    set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
 
 def next_month():
     global current_date
     current_date += relativedelta(months=1)
     update_label()
-    price_calc()
+    set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
 
 def previous_month():
     global current_date
     current_date -= relativedelta(months=1)
     update_label()
-    price_calc()
+    set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
 
 ###################################################################################
 price = None
@@ -458,7 +460,7 @@ rect_y2 = yB + shiftB + sizeB
 
 rect_outline_color = "#f0f0f0"  # цвет обводки
 rect_outline_width = 3  # Толщина обводки
-rect_font = ("Arial", 14)  # Шрифт
+rect_font = ("Arial", 20)  # Шрифт
 
 # Создаем прямоугольник с разными координатами
 status_rect = canvas.create_rectangle(
@@ -468,27 +470,29 @@ status_rect = canvas.create_rectangle(
     width=rect_outline_width,
 )
 
-# Создаем текстовый элемент внутри прямоугольника
+text_padding_x = (w * 0.005)  # Горизонтальный отступ
+text_padding_y = (w * 0.004)  # Вертикальный отступ
+
+# Создаем текстовый элемент в левом верхнем углу прямоугольника
 status_text = canvas.create_text(
-    (rect_x1 + rect_x2) / 2,  # Центр по X
-    (rect_y1 + rect_y2) / 2,  # Центр по Y
+    rect_x1 + text_padding_x,  # X: левый край + отступ
+    rect_y1 + text_padding_y,  # Y: верхний край + отступ
     text="СТАТУС СИСТЕМЫ\n\nОжидание данных...",
     fill="white",
     font=rect_font,
-    justify=CENTER,
-    width=(rect_x2 - rect_x1) - 40,  # Ширина текста с отступами
-    anchor="center"
+    justify=LEFT,  # Выравнивание по левому краю
+    width=(rect_x2 - rect_x1) - 2*text_padding_x,  # Ширина с учетом отступов
+    anchor="nw"  # Привязка к северо-западному углу (левому верхнему)
 )
 
-# Функция для обновления текста
+# Функция для обновления текста (оставляем без изменений)
 def set_status_message(message):
     """Устанавливает текст сообщения в прямоугольнике"""
     canvas.itemconfig(status_text, text=message)
-    # Обновляем отображение
     canvas.update_idletasks()
 
 # Примеры использования:
-set_status_message("СИСТЕМА В РАБОТЕ\n\nТекущий статус: норма\nЗагрузка: 75%")
+
 # set_status_message("ВНИМАНИЕ!\n\nОбнаружена ошибка\nКод: 45")
 # set_status_message("РАБОТА ЗАВЕРШЕНА\n\nВсе процессы\nостановлены")
 
