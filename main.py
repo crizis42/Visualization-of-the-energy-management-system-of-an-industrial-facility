@@ -392,7 +392,12 @@ def BLR_info(num, prcnt, pwr, state):
     elif state == "off":
         canvas.create_image(x, y, image=boiler_off, anchor="nw")
 
-BLR_info(3, 100, 1000, "off")
+BLR_info(3, 145, 1337, "off")
+BLR_info(1, 175, 775, "on")
+BLR_info(2, 100, 478, "off")
+BLR_info(4, 188, 1366, "off")
+BLR_info(5, 199, 2011, "on")
+BLR_info(6, 144, 1151, "on")
 
 # Константы для кнопок управления датой
 BUTTON_WIDTH = 17  # Ширина в символах
@@ -449,11 +454,14 @@ download_button = Button(root,
 download_button.place(relx=0.98, rely=0.95, anchor=SE)
 
 # Параметры прямоугольника (добавьте в начало с другими параметрами)
-rect_x1 = w - 625  # Левый верхний угол X
-rect_y1 = h - 500  # Левый верхний угол Y
-rect_x2 = w - 50  # Правый нижний угол X
-rect_y2 = h - 175  # Правый нижний угол Y
-rect_outline_color = "cyan"  # цвет обводки
+rect_x1, rect_y1 = BLR_dict[6]["coords"]
+rect_y1 += (h * 0.037)
+rect_x1 = xG + (sizeG + marginG)*6
+
+rect_x2 = xG + sizeG + (sizeG + marginG)*8
+rect_y2 = yB + shiftB + sizeB
+
+rect_outline_color = "#f0f0f0"  # цвет обводки
 rect_outline_width = 3  # Толщина обводки
 rect_font = ("Arial", 14)  # Шрифт
 
@@ -463,7 +471,6 @@ status_rect = canvas.create_rectangle(
     rect_x2, rect_y2,
     outline=rect_outline_color,
     width=rect_outline_width,
-    fill='black'  # Фон прямоугольника
 )
 
 # Создаем текстовый элемент внутри прямоугольника
