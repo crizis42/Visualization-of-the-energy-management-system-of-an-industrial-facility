@@ -4,6 +4,8 @@ from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk 
 import pandas as pq # библиотека для excel (pip install pandas openpyxl xlrd)
 import ctypes #Подключаем типы из С/С++
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
 
 # Чтение файла excel 
 exel_1 = pq.read_excel("Excel/1_Данные_по_потреблению_электроэнергии.xlsx")
@@ -42,6 +44,8 @@ root.geometry(f'{work_width}x{work_height}+{rect.left}+{rect.top}')
 w = work_width
 h = work_height #Переопределение рабочей области
 
+current_date = datetime.now().date()
+
 def fullscreen(event):
     global is_fullscreen
     is_fullscreen = not is_fullscreen
@@ -62,6 +66,29 @@ def load_scaled_image(path, size):
     img = Image.open(path)
     img = img.resize((int(size), int(size)), Image.LANCZOS) 
     return ImageTk.PhotoImage(img)
+
+def update_label():
+    label.config(text=current_date.strftime("%d.%m.%Y"))
+
+def next_date():
+    global current_date
+    current_date += timedelta(days=1)
+    update_label()
+
+def next_month():
+    global current_date
+    current_date += relativedelta(months=1)
+    update_label()
+
+def previous_date():
+    global current_date
+    current_date -= timedelta(days=1)
+    update_label()
+
+def previous_month():
+    global current_date
+    current_date -= relativedelta(months=1)
+    update_label()
 
 ###################################################################################
 
@@ -160,10 +187,19 @@ BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + s
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(relx=0.5285, rely=0.94, anchor=SE) #использовал rely relx
 
-previous_date_button = Button(root, text='Предыдущий день')
-previous_date_button.place(relx=0.08, rely=0.5, anchor=SE) #Кнопка для переключения на предыдущий день
+previous_date_button = Button(root, text='Предыдущий день', command=previous_date)
+previous_date_button.place(relx=0.08, rely=0.5, anchor=SE,) #Кнопка для переключения на предыдущий день
 
-next_date_button = Button(root, text='Следующий день')
+previous_month_button = Button(root, text='Предыдущий месяц', command=previous_month)
+previous_month_button.place(relx=0.08, rely=0.55, anchor=SE,) #Кнопка для переключения на предыдущий месяц
+
+next_date_button = Button(root, text='Следующий день', command=next_date)
 next_date_button.place(relx=0.975, rely=0.5, anchor=SE) #Кнопка для переключения на следующий день
+
+next_month_button = Button(root, text='Следующий месяц', command=next_month)
+next_month_button.place(relx=0.975, rely=0.55, anchor=SE,) #Кнопка для переключения на следующий месяц
+
+label = Label(root, text=current_date.strftime("%d.%m.%Y"), font=("Arial", 20))
+label.place(relx=0.5375, rely=0.5, anchor=SE)
 
 root.mainloop()
