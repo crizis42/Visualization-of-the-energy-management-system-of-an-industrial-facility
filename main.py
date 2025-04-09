@@ -6,6 +6,7 @@ import pandas as pq # библиотека для excel (pip install pandas open
 import ctypes #Подключаем типы из С/С++
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
+#from boilers import UtilizationBoiler, heat_from_temp, heat_load_distribution, heat_cost
 
 # Чтение файла excel 
 exel_1 = pq.read_excel("Excel/1_Данные_по_потреблению_электроэнергии.xlsx")
