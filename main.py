@@ -1,14 +1,16 @@
+from PIL import Image
 import ctypes #Подключаем типы из С/С++
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
 import math
 import numpy
 import pandas as pd
-from PIL import Image, ImageTk 
 import random
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
 from tkinter.messagebox import showinfo, showerror
+from PIL import Image, ImageTk
+
 
 
 is_fullscreen = False
@@ -73,6 +75,7 @@ def open_excel_files():
         showinfo("Успех!", "Файлы успешно загружены!")
         set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
         boilers_initialization()
+        gtu_initialization()
 
 
     except Exception as e:
@@ -135,6 +138,7 @@ def next_date():
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
+    gtu_initialization()
 
 def previous_date():
     global current_date
@@ -142,6 +146,7 @@ def previous_date():
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
+    gtu_initialization()
 
 def next_month():
     global current_date
@@ -149,6 +154,7 @@ def next_month():
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
+    gtu_initialization()
 
 def previous_month():
     global current_date
@@ -156,6 +162,7 @@ def previous_month():
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
+    gtu_initialization()
 
 class UtilizationBoiler:
     """Котел утилизатор КВ-ГМ-3,15-95.
@@ -507,7 +514,7 @@ def gtu_initialization():
         gtu.to = random.randint(0, 1500)
         gtu.kr = random.randint(0, 10000)
 
-    current_datetime = datetime.datetime.now() # текущая дата
+    current_datetime = datetime.now() # текущая дата
     custom_datetime_1 = 6
     custom_datetime_2 = 10
     current_season = None
@@ -570,7 +577,9 @@ def gtu_initialization():
                 gtu.state = 0
         else:
             continue
+    for gtu in gtes:
 
+        GTU_info(gtu.n + 1, gtu.power, gtu.load, f'{gtu.to:.3f}', f'{gtu.kr:.3f}', gtu.state)
 ###################################################################################
 price = None
 root.bind('<F11>', fullscreen)
@@ -672,11 +681,11 @@ def GTU_info(num, wt, prcnt, hTO, hKR, state):
     img_x, img_y = GTU_dict[num]["coords"]
     
  
-    if state == "on":
+    if state == 0:
         canvas.create_image(img_x, img_y, image=gtu_on, anchor="nw", tags=f"gtu_{num}")
-    elif state == "off":
+    elif state == 1:
         canvas.create_image(img_x, img_y, image=gtu_off, anchor="nw", tags=f"gtu_{num}")
-    elif state == "repair":
+    elif state == 2:
         canvas.create_image(img_x, img_y, image=gtu_repair, anchor="nw", tags=f"gtu_{num}")
     
     lines = [
