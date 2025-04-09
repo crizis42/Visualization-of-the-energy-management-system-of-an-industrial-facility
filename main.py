@@ -1,7 +1,13 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
-from PIL import Image, ImageTk #pip install pillow
+from PIL import Image, ImageTk
+import pandas as pq # библиотека для exel (pip install pandas openpyxl xlrd)
+
+# Чтение файла excel 
+exel_1 = pq.read_excel("1_Данные_по_потреблению_электроэнергии.xlsx")
+exel_2 = pq.read_excel("2_Наработка_ГТЭС.xlsx")
+exel_3 = pq.read_excel("3_Стоимость_СОГ.xlsx")
 
 is_fullscreen = False
 root = Tk()
@@ -47,11 +53,11 @@ canvas.place(x=0, y=0, width=w, height=h)  # Растягиваем на вес�
 # Установки ГТУ
 marginG = w * 0.02  # Отступы
 sizeG = w * 0.09  # Размер
-xG = w*0.015       # Начальная координата X
-yG = h*0.025       # Начальная координата Y
+xG = 10       # Начальная координата X
+yG = 10       # Начальная координата Y
 
-gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
-    
+gtu_on = load_scaled_image("GTU_on.png", sizeG)
+     
 # Создаем 9 изображений ГТУ
 img1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
 img2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
@@ -65,10 +71,10 @@ img9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="n
 
 marginB = w * 0.08  # Отступы
 sizeB = w * 0.09  # Размер
-xB = w*0.025     # Начальная координата X
-yB = h*0.44       # Начальная координата Y
+xB = 10       # Начальная координата X
+yB = 400       # Начальная координата Y
 
-boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
+boiler_on = load_scaled_image("boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
 img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
