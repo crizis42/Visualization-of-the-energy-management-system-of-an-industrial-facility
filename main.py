@@ -63,10 +63,10 @@ img7 = canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="n
 img8 = canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw")
 img9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw")
 
-marginB = w * 0.02  # Отступы
+marginB = w * 0.08  # Отступы
 sizeB = w * 0.09  # Размер
 xB = 10       # Начальная координата X
-yB = 250       # Начальная координата Y
+yB = 400       # Начальная координата Y
 
 boiler_on = load_scaled_image("boiler_on.png", sizeG)
 
