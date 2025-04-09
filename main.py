@@ -125,33 +125,74 @@ colorG = "green" #Настройка цвета
 widthG = 3 #Настройка толщины обводки
 shiftG = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
 
-GTU_hud1 = canvas.create_rectangle(xG, yG + shiftG, xG + sizeG, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud2 = canvas.create_rectangle(xG + (sizeG + marginG)*1, yG + shiftG, xG + sizeG + (sizeG + marginG)*1, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud3 = canvas.create_rectangle(xG + (sizeG + marginG)*2, yG + shiftG, xG + sizeG + (sizeG + marginG)*2, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud4 = canvas.create_rectangle(xG + (sizeG + marginG)*3, yG + shiftG, xG + sizeG + (sizeG + marginG)*3, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud5 = canvas.create_rectangle(xG + (sizeG + marginG)*4, yG + shiftG, xG + sizeG + (sizeG + marginG)*4, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud6 = canvas.create_rectangle(xG + (sizeG + marginG)*5, yG + shiftG, xG + sizeG + (sizeG + marginG)*5, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud7 = canvas.create_rectangle(xG + (sizeG + marginG)*6, yG + shiftG, xG + sizeG + (sizeG + marginG)*6, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud8 = canvas.create_rectangle(xG + (sizeG + marginG)*7, yG + shiftG, xG + sizeG + (sizeG + marginG)*7, yG + shiftG + sizeG, outline=colorG, width=widthG)
-GTU_hud9 = canvas.create_rectangle(xG + (sizeG + marginG)*8, yG + shiftG, xG + sizeG + (sizeG + marginG)*8, yG + shiftG + sizeG, outline=colorG, width=widthG)
+GTU_huds = {
+    1: {
+        'rect': canvas.create_rectangle(xG, yG + shiftG, xG + sizeG, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG, yG + shiftG)
+    },
+    2: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*1, yG + shiftG, xG + sizeG + (sizeG + marginG)*1, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*1, yG + shiftG)
+    },
+    3: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*2, yG + shiftG, xG + sizeG + (sizeG + marginG)*2, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*2, yG + shiftG)
+    },
+    4: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*3, yG + shiftG, xG + sizeG + (sizeG + marginG)*3, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*3, yG + shiftG)
+    },
+    5: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*4, yG + shiftG, xG + sizeG + (sizeG + marginG)*4, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*4, yG + shiftG)
+    },
+    6: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*5, yG + shiftG, xG + sizeG + (sizeG + marginG)*5, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*5, yG + shiftG)
+    },
+    7: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*6, yG + shiftG, xG + sizeG + (sizeG + marginG)*6, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*6, yG + shiftG)
+    },
+    8: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*7, yG + shiftG, xG + sizeG + (sizeG + marginG)*7, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*7, yG + shiftG)
+    },
+    9: {
+        'rect': canvas.create_rectangle(xG + (sizeG + marginG)*8, yG + shiftG, xG + sizeG + (sizeG + marginG)*8, yG + shiftG + sizeG, outline=colorG, width=widthG),
+        'coords': (xG + (sizeG + marginG)*8, yG + shiftG)
+    }
+}
 
-center_x = xG + (w * 0.005)
-center_y = yG + shiftG + (w * 0.003)
+# Функция для отображения текста в нужных ГТУ
+def GTU_info (num, wt, prcnt, hTO, hKR, state):
 
-# Создаем текст по центру первого прямоугольника
-canvas.create_text(
-    center_x, 
-    center_y,
-    text="номер ГТУ: \n\
-номинальная W: \n\
-уровень загрузки: \n\
-моточасы до ТО: \n\
-моточасы до КР: \n\
-состояние:",  # Ваш текст
-    anchor="nw",        # Центрирование относительно точки
-    fill="white",           # Цвет текста
-    font=("Arial", int(w*0.007))      # Шрифт и размер (опционально)
-)
+    center_x, center_y = GTU_huds[num]["coords"]
+    center_x += (w * 0.005)
+    center_y += (w * 0.003)
+
+    
+    lines = [
+        f"Номер ГТУ: {num}",
+        f"Номинальная W: {wt}W",
+        f"Уровень загрузки: {prcnt}%",
+        f"Моточасы до ТО: {hTO}Ч",
+        f"Моточасы до КР: {hKR}Ч",
+        f"Состояние: {state}"
+    ]
+    line_height = int(w * 0.015)  # Высота строки
+
+    for i, line in enumerate(lines):
+        canvas.create_text(
+            center_x,
+            center_y + i * line_height,
+            text=line,
+            anchor="nw",
+            fill="white",
+            font=("Arial", int(h*0.01))
+        )
+
+GTU_info (6, 1, 1, 1, 1, 1)
 
 # Котлы
 marginB = w * 0.08  # Отступы
@@ -177,12 +218,59 @@ colorB = "green" #Настройка цвета
 widthB = 3 #Настройка толщины обводки
 shiftB = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
 
-BLR_hud1 = canvas.create_rectangle(xB, yB + shiftB, xB + sizeB, yB + shiftB + sizeB, outline=colorB, width=widthB)
-BLR_hud2 = canvas.create_rectangle(xB + (sizeB + marginB)*1, yB + shiftB, xB + sizeB + (sizeB + marginB)*1, yB + shiftB + sizeB, outline=colorB, width=widthB)
-BLR_hud3 = canvas.create_rectangle(xB + (sizeB + marginB)*2, yB + shiftB, xB + sizeB + (sizeB + marginB)*2, yB + shiftB + sizeB, outline=colorB, width=widthB)
-BLR_hud4 = canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + sizeB + (sizeB + marginB)*3, yB + shiftB + sizeB, outline=colorB, width=widthB)
-BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB)
-BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
+BLR_huds = {
+    1: {
+        'rect': canvas.create_rectangle(xB, yB + shiftB, xB + sizeB, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB, yB + shiftB)
+    },
+    2: {
+        'rect': canvas.create_rectangle(xB + (sizeB + marginB)*1, yB + shiftB, xB + sizeB + (sizeB + marginB)*1, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB + (sizeB + marginB)*1, yB + shiftB)
+    },
+    3: {
+        'rect': canvas.create_rectangle(xB + (sizeB + marginB)*2, yB + shiftB, xB + sizeB + (sizeB + marginB)*2, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB + (sizeB + marginB)*2, yB + shiftB)
+    },
+    4: {
+        'rect': canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + sizeB + (sizeB + marginB)*3, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB + (sizeB + marginB)*3, yB + shiftB)
+    },
+    5: {
+        'rect': canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB + (sizeB + marginB)*4, yB + shiftB)
+    },
+    6: {
+        'rect': canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB),
+        'coords': (xB + (sizeB + marginB)*5, yB + shiftB)
+    }
+}
+
+# Функция для отображения текста в нужных ГТУ
+def GTU_info (num, prcnt, state):
+
+    center_x, center_y = BLR_huds[num]["coords"]
+    center_x += (w * 0.005)
+    center_y += (w * 0.003)
+
+    
+    lines = [
+        f"Номер котла: {num}",
+        f"Уровень загрузки: {prcnt}%",
+        f"Состояние: {state}"
+    ]
+    line_height = int(w * 0.015)  # Высота строки
+
+    for i, line in enumerate(lines):
+        canvas.create_text(
+            center_x,
+            center_y + i * line_height,
+            text=line,
+            anchor="nw",
+            fill="white",
+            font=("Arial", int(h*0.01))
+        )
+
+GTU_info (3, 100, "вкл")
 
 # Константы для кнопок управления датой
 BUTTON_WIDTH = 17  # Ширина в символах
