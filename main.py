@@ -3,6 +3,7 @@ from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk
 import pandas as pq # библиотека для excel (pip install pandas openpyxl xlrd)
+import ctypes #Подключаем типы из С/С++
 
 # Чтение файла excel 
 exel_1 = pq.read_excel("Excel/1_Данные_по_потреблению_электроэнергии.xlsx")
@@ -15,10 +16,28 @@ root = Tk()
 root.title('Визуализация системы')
 root['bg'] = 'black'
 
-w = root.winfo_screenwidth()
-h = root.winfo_screenheight()
+# Получаем ширину и высоту экрана
+# Полный размер экрана (вместе с панелью задач)
+user32 = ctypes.windll.user32
+user32.SetProcessDPIAware()  # Учитываем масштабирование Windows
+screen_width = user32.GetSystemMetrics(0)  # Ширина экрана
+screen_height = user32.GetSystemMetrics(1)  # Высота экрана
 
-root.geometry(f'{w}x{h}+0+0')
+# Получаем размеры рабочей области экрана (без панели задач)
+# Используем системную функцию Windows SystemParametersInfoW
+spi_getworkarea = 48  # Константа для получения рабочей области
+rect = ctypes.wintypes.RECT()  # Структура для хранения координат рабочей области
+
+# Заполняем структуру rect размерами рабочей области
+ctypes.windll.user32.SystemParametersInfoW(spi_getworkarea, 0, ctypes.byref(rect), 0)
+
+# Рассчитываем ширину и высоту рабочей области
+work_width = rect.right - rect.left
+work_height = rect.bottom - rect.top
+
+# Устанавливаем размеры и положение окна в пределах рабочей области
+# {ширина}x{высота}+{смещение по X}+{смещение по Y}
+root.geometry(f'{work_width}x{work_height}+{rect.left}+{rect.top}')
 
 
 def fullscreen(event):
