@@ -110,20 +110,33 @@ xG = (w - widthG) / 2
 yG = w * 0.015       # Начальная координата Y
 
 gtu_on = load_scaled_image("img/GTU_on.png", sizeG)
+gtu_off = load_scaled_image("img/GTU_off.png", sizeG)
+gtu_repair = load_scaled_image("img/GTU_repair.png", sizeG)
     
 # Создаем 9 изображений ГТУ
-GTU1 = canvas.create_image(xG, yG, image=gtu_on, anchor="nw")
-GTU2 = canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw")
-GTU3 = canvas.create_image(xG + (sizeG + marginG)*2, yG, image=gtu_on, anchor="nw")
-GTU4 = canvas.create_image(xG + (sizeG + marginG)*3, yG, image=gtu_on, anchor="nw")
-GTU5 = canvas.create_image(xG + (sizeG + marginG)*4, yG, image=gtu_on, anchor="nw")
-GTU6 = canvas.create_image(xG + (sizeG + marginG)*5, yG, image=gtu_on, anchor="nw")
-GTU7 = canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="nw")
-GTU8 = canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw")
-GTU9 = canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw")
+GTU_dict = {
+    1: {'id': canvas.create_image(xG, yG, image=gtu_on, anchor="nw"), 
+       'coords': (xG, yG)},
+    2: {'id': canvas.create_image(xG + (sizeG + marginG)*1, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*1, yG)},
+    3: {'id': canvas.create_image(xG + (sizeG + marginG)*2, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*2, yG)},
+    4: {'id': canvas.create_image(xG + (sizeG + marginG)*3, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*3, yG)},
+    5: {'id': canvas.create_image(xG + (sizeG + marginG)*4, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*4, yG)},
+    6: {'id': canvas.create_image(xG + (sizeG + marginG)*5, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*5, yG)},
+    7: {'id': canvas.create_image(xG + (sizeG + marginG)*6, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*6, yG)},
+    8: {'id': canvas.create_image(xG + (sizeG + marginG)*7, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*7, yG)},
+    9: {'id': canvas.create_image(xG + (sizeG + marginG)*8, yG, image=gtu_on, anchor="nw"),
+       'coords': (xG + (sizeG + marginG)*8, yG)}
+}
 
 # Худ для ГТУ
-colorG = "green" #Настройка цвета
+colorG = "#f0f0f0" #Настройка цвета
 widthG = 3 #Настройка толщины обводки
 shiftG = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
 
@@ -176,11 +189,10 @@ def GTU_info (num, wt, prcnt, hTO, hKR, state):
     
     lines = [
         f"Номер ГТУ: {num}",
-        f"Номинальная W: {wt}W",
+        f"Номинальная W: {wt}Квт",
         f"Уровень загрузки: {prcnt}%",
-        f"Моточасы до ТО: {hTO}Ч",
-        f"Моточасы до КР: {hKR}Ч",
-        f"Состояние: {state}"
+        f"Моточасы до ТО: {hTO}ч",
+        f"Моточасы до КР: {hKR}ч",
     ]
     line_height = int(w * 0.015)  # Высота строки
 
@@ -193,8 +205,16 @@ def GTU_info (num, wt, prcnt, hTO, hKR, state):
             fill="white",
             font=("Arial", int(h*0.01))
         )
+    x, y = GTU_dict[num]["coords"]
+    if state == "on":
+        canvas.create_image(x, y, image=gtu_on, anchor="nw")
+    elif state == "off":
+        canvas.create_image(x, y, image=gtu_off, anchor="nw")
+    elif state == "repair":
+        canvas.create_image(x, y, image=gtu_repair, anchor="nw")
+    
+GTU_info (6, 1, 1, 1, 1, "off")
 
-GTU_info (6, 1, 1, 1, 1, 1)
 
 # Котлы
 marginB = w * 0.08  # Отступы
@@ -206,17 +226,39 @@ xB = (w - widthB) / 2       # Начальная координата X
 yB = w * 0.26     # Начальная координата Y
 
 boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
+boiler_off = load_scaled_image("img/Boiler_off.png", sizeG)
 
 # Создаем 6 изображений Котлов
-BLR1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
-BLR2 = canvas.create_image(xB + (sizeB + marginB)*1, yB, image=boiler_on, anchor="nw")
-BLR3 = canvas.create_image(xB + (sizeB + marginB)*2, yB, image=boiler_on, anchor="nw")
-BLR4 = canvas.create_image(xB + (sizeB + marginB)*3, yB, image=boiler_on, anchor="nw")
-BLR5 = canvas.create_image(xB + (sizeB + marginB)*4, yB, image=boiler_on, anchor="nw")
-BLR6 = canvas.create_image(xB + (sizeB + marginB)*5, yB, image=boiler_on, anchor="nw")
+BLR_dict = {
+    1: {
+        'id': canvas.create_image(xB, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB, yB)
+    },
+    2: {
+        'id': canvas.create_image(xB + (sizeB + marginB)*1, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB + (sizeB + marginB)*1, yB)
+    },
+    3: {
+        'id': canvas.create_image(xB + (sizeB + marginB)*2, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB + (sizeB + marginB)*2, yB)
+    },
+    4: {
+        'id': canvas.create_image(xB + (sizeB + marginB)*3, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB + (sizeB + marginB)*3, yB)
+    },
+    5: {
+        'id': canvas.create_image(xB + (sizeB + marginB)*4, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB + (sizeB + marginB)*4, yB)
+    },
+    6: {
+        'id': canvas.create_image(xB + (sizeB + marginB)*5, yB, image=boiler_on, anchor="nw"),
+        'coords': (xB + (sizeB + marginB)*5, yB)
+    }
+}
+
 
 # Худ для Котлов
-colorB = "green" #Настройка цвета
+colorB = "#f0f0f0" #Настройка цвета
 widthB = 3 #Настройка толщины обводки
 shiftB = w * 0.1 #Настройка сдвига худа (по умолчанию находится на месте самого ГТУ)
 
@@ -248,31 +290,40 @@ BLR_huds = {
 }
 
 # Функция для отображения текста в нужных ГТУ
-def BLR_info (num, prcnt, state):
-
+def BLR_info(num, prcnt, pwr, state):
+    # Удаляем ВЕСЬ старый текст этого ГТУ по единому тегу
+    canvas.delete(f"gtu_text_{num}")
+    
+    # Получаем координаты
     center_x, center_y = BLR_huds[num]["coords"]
     center_x += (w * 0.005)
     center_y += (w * 0.003)
-
     
     lines = [
         f"Номер котла: {num}",
         f"Уровень загрузки: {prcnt}%",
-        f"Состояние: {state}"
+        f"Мощность: {pwr}Квт"
     ]
-    line_height = int(w * 0.015)  # Высота строки
-
+    
+    # Создаем весь текст с ОДНИМ ОБЩИМ ТЕГОМ
     for i, line in enumerate(lines):
         canvas.create_text(
             center_x,
-            center_y + i * line_height,
+            center_y + i * int(w * 0.015),
             text=line,
             anchor="nw",
             fill="white",
-            font=("Arial", int(h*0.01))
+            font=("Arial", int(h*0.01)),
+            tags=f"gtu_text_{num}"  # Единый тег для всех строк
         )
+    
+    x, y = BLR_dict[num]["coords"]
+    if state == "on":
+        canvas.create_image(x, y, image=boiler_on, anchor="nw")
+    elif state == "off":
+        canvas.create_image(x, y, image=boiler_off, anchor="nw")
 
-BLR_info (3, 100, "вкл")
+BLR_info(3, 100, 1000, "off")
 
 # Константы для кнопок управления датой
 BUTTON_WIDTH = 17  # Ширина в символах
@@ -327,6 +378,8 @@ download_button = Button(root,
                         command=open_file,
                         font=BUTTON_FONT)
 download_button.place(relx=0.98, rely=0.95, anchor=SE)
+
+
 
 
 root.mainloop()
