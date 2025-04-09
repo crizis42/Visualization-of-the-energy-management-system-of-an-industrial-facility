@@ -158,5 +158,5 @@ BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + s
 BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
-download_button.place(relx=0.95, rely=0.95, anchor=SE) #использовал rely relx
+download_button.place(relx=0.5285, rely=0.94, anchor=SE) #использовал rely relx
 root.mainloop()
