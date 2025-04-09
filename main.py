@@ -356,6 +356,47 @@ download_button = Button(root,
                         font=BUTTON_FONT)
 download_button.place(relx=0.98, rely=0.95, anchor=SE)
 
+# Параметры прямоугольника (добавьте в начало с другими параметрами)
+rect_x1 = w - 625  # Левый верхний угол X
+rect_y1 = h - 500  # Левый верхний угол Y
+rect_x2 = w - 50  # Правый нижний угол X
+rect_y2 = h - 175  # Правый нижний угол Y
+rect_outline_color = "cyan"  # цвет обводки
+rect_outline_width = 3  # Толщина обводки
+rect_font = ("Arial", 14)  # Шрифт
+
+# Создаем прямоугольник с разными координатами
+status_rect = canvas.create_rectangle(
+    rect_x1, rect_y1,
+    rect_x2, rect_y2,
+    outline=rect_outline_color,
+    width=rect_outline_width,
+    fill='black'  # Фон прямоугольника
+)
+
+# Создаем текстовый элемент внутри прямоугольника
+status_text = canvas.create_text(
+    (rect_x1 + rect_x2) / 2,  # Центр по X
+    (rect_y1 + rect_y2) / 2,  # Центр по Y
+    text="СТАТУС СИСТЕМЫ\n\nОжидание данных...",
+    fill="white",
+    font=rect_font,
+    justify=CENTER,
+    width=(rect_x2 - rect_x1) - 40,  # Ширина текста с отступами
+    anchor="center"
+)
+
+# Функция для обновления текста
+def set_status_message(message):
+    """Устанавливает текст сообщения в прямоугольнике"""
+    canvas.itemconfig(status_text, text=message)
+    # Обновляем отображение
+    canvas.update_idletasks()
+
+# Примеры использования:
+set_status_message("СИСТЕМА В РАБОТЕ\n\nТекущий статус: норма\nЗагрузка: 75%")
+# set_status_message("ВНИМАНИЕ!\n\nОбнаружена ошибка\nКод: 45")
+# set_status_message("РАБОТА ЗАВЕРШЕНА\n\nВсе процессы\nостановлены")
 
 root.mainloop()
 
