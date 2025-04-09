@@ -184,25 +184,62 @@ BLR_hud4 = canvas.create_rectangle(xB + (sizeB + marginB)*3, yB + shiftB, xB + s
 BLR_hud5 = canvas.create_rectangle(xB + (sizeB + marginB)*4, yB + shiftB, xB + sizeB + (sizeB + marginB)*4, yB + shiftB + sizeB, outline=colorB, width=widthB)
 BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + sizeB + (sizeB + marginB)*5, yB + shiftB + sizeB, outline=colorB, width=widthB)
 
-button_width = 17  # Ширина кнопок
-button_height = 1  # Высота кнопок
+# Константы для кнопок управления датой
+BUTTON_WIDTH = 17  # Ширина в символах
+BUTTON_HEIGHT = 1   # Высота в линиях текста
+BUTTON_FONT = ('Arial', 10)  # Шрифт для кнопок
 
-download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
-download_button.place(x=w*0.98, rely=0.94, anchor=NE) #использовал rely relx
+# Создаем фрейм для группировки кнопок управления датой
+date_control_frame = Frame(root, bg='black')
+date_control_frame.place(relx=0.02, rely=0.95, anchor=SW)  # Фиксируем в нижнем левом углу
 
-previous_date_button = Button(root, text='Предыдущий день', command=previous_date, width=button_width, height=button_height)
-previous_date_button.place(x=w*0.02, rely=0.94, anchor=W) #Кнопка для переключения на предыдущий день
+# Создаем кнопки внутри фрейма
+previous_month_button = Button(date_control_frame, text='Предыдущий месяц', 
+                             command=previous_month, 
+                             width=BUTTON_WIDTH, 
+                             height=BUTTON_HEIGHT,
+                             font=BUTTON_FONT)
+previous_month_button.pack(side=LEFT, padx=5, pady=2)
 
-previous_month_button = Button(root, text='Предыдущий месяц', command=previous_month, width=button_width, height=button_height)
-previous_month_button.place(x=w*0.02, rely=0.918, anchor=W) #Кнопка для переключения на предыдущий месяц
+previous_date_button = Button(date_control_frame, text='Предыдущий день', 
+                            command=previous_date, 
+                            width=BUTTON_WIDTH, 
+                            height=BUTTON_HEIGHT,
+                            font=BUTTON_FONT)
+previous_date_button.pack(side=LEFT, padx=5, pady=2)
 
-next_date_button = Button(root, text='Следующий день', command=next_date, width=button_width, height=button_height)
-next_date_button.place(x=w*0.0722, rely=0.94, anchor=W) #Кнопка для переключения на следующий день
+next_date_button = Button(date_control_frame, text='Следующий день', 
+                         command=next_date, 
+                         width=BUTTON_WIDTH, 
+                         height=BUTTON_HEIGHT,
+                         font=BUTTON_FONT)
+next_date_button.pack(side=LEFT, padx=5, pady=2)
 
-next_month_button = Button(root, text='Следующий месяц', command=next_month, width=button_width, height=button_height)
-next_month_button.place(x=w*0.0722, rely=0.918, anchor=W) #Кнопка для переключения на следующий месяц
+next_month_button = Button(date_control_frame, text='Следующий месяц', 
+                          command=next_month, 
+                          width=BUTTON_WIDTH, 
+                          height=BUTTON_HEIGHT,
+                          font=BUTTON_FONT)
+next_month_button.pack(side=LEFT, padx=5, pady=2)
 
-label = Label(root, text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 35))
-label.place(x=w*0.125, rely=0.93, anchor=W)
+# Метка с датой
+date_label = Label(date_control_frame, 
+                  text=current_date.strftime("%d.%m.%Y"), 
+                  fg='white', 
+                  bg='black', 
+                  font=('Arial', 14, 'bold'))
+date_label.pack(side=LEFT, padx=10)
+
+# Кнопка загрузки (оставляем в правом нижнем углу)
+download_button = Button(root, 
+                        text='Загрузить данные', 
+                        bg='white', 
+                        command=open_file,
+                        font=BUTTON_FONT)
+download_button.place(relx=0.98, rely=0.95, anchor=SE)
+
+# Функция обновления даты (модифицированная)
+def update_label():
+    date_label.config(text=current_date.strftime("%d.%m.%Y"))
 
 root.mainloop()
