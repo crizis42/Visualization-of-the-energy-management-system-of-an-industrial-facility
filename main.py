@@ -68,7 +68,7 @@ def load_scaled_image(path, size):
     return ImageTk.PhotoImage(img)
 
 def update_label():
-    label.config(text=current_date.strftime("%d.%m.%Y"))
+    label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 20))
 
 def next_date():
     global current_date
@@ -199,7 +199,7 @@ next_date_button.place(x=w*0.98, rely=0.94, anchor=NE) #Кнопка для пе
 next_month_button = Button(root, text='Следующий месяц', command=next_month)
 next_month_button.place(relx=0.975, rely=0.55, anchor=SE,) #Кнопка для переключения на следующий месяц
 
-label = Label(root, text=current_date.strftime("%d.%m.%Y"), font=("Arial", 20))
+label = Label(root, text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 20))
 label.place(relx=0.5375, rely=0.5, anchor=SE)
 
 root.mainloop()
