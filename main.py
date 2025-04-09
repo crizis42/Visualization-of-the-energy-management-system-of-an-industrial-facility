@@ -68,7 +68,7 @@ sizeB = w * 0.09  # Размер
 xB = w*0.025     # Начальная координата X
 yB = h*0.44       # Начальная координата Y
 
-boiler_on = load_scaled_image("img/boiler_on.png", sizeG)
+boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
 
 # Создаем 6 изображений Котлов
 img1 = canvas.create_image(xB, yB, image=boiler_on, anchor="nw")
