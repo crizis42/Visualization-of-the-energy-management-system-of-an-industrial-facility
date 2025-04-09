@@ -159,4 +159,11 @@ BLR_hud6 = canvas.create_rectangle(xB + (sizeB + marginB)*5, yB + shiftB, xB + s
 
 download_button = Button(root, text='Загрузить данные', bg='white', command=open_file)
 download_button.place(relx=0.5285, rely=0.94, anchor=SE) #использовал rely relx
+
+previous_date_button = Button(root, text='Предыдущий день')
+previous_date_button.place(relx=0.08, rely=0.5, anchor=SE) #Кнопка для переключения на предыдущий день
+
+next_date_button = Button(root, text='Следующий день')
+next_date_button.place(relx=0.975, rely=0.5, anchor=SE) #Кнопка для переключения на следующий день
+
 root.mainloop()
