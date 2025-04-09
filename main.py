@@ -2,17 +2,14 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk 
-import pandas as pq # библиотека для excel (pip install pandas openpyxl xlrd)
 import ctypes #Подключаем типы из С/С++
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta #изменение месяца pip install python-dateutil
 #from boilers import UtilizationBoiler, heat_from_temp, heat_load_distribution, heat_cost
+import pandas as pd
+import numpy as np
 
-
-# Чтение файла excel 
-exel_1 = pq.read_excel("Excel/1_Данные_по_потреблению_электроэнергии.xlsx")
-exel_2 = pq.read_excel("Excel/2_Наработка_ГТЭС.xlsx")
-exel_3 = pq.read_excel("Excel/3_Стоимость_СОГ.xlsx")
+gas_path = 'Excel/3_Стоимость_СОГ.xlsx'
 
 is_fullscreen = False
 root = Tk()
@@ -46,7 +43,38 @@ root.geometry(f'{work_width}x{work_height}+{rect.left}+{rect.top}')
 w = work_width
 h = work_height #Переопределение рабочей области
 
+# Читаем данные
+df = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
+
+# Определяем количество столбцов с данными (строка 2 начиная с колонки 1)
+last_col = df.loc[2, 1:].last_valid_index()  # Последняя не пустая колонка
+
+# Получаем месяцы и цены
+months = df.loc[0, 1:last_col].to_numpy()
+gas_prices = df.loc[2, 1:last_col].to_numpy()
+price = None
+
 current_date = datetime.now().date()
+
+# Текущая дата
+current_month = current_date.month
+current_year = current_date.year
+
+def price_calc(current_year, current_month, months, gas_prices, price):
+  if current_year == 2024:
+      if current_month <= len(gas_prices):
+          price = gas_prices[current_month - 1]
+          print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
+      else:
+          print('Нет данных на этот месяц')
+  elif current_year == 2025:
+      price = gas_prices[15]
+      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
+  elif current_year == 2026:
+      price = gas_prices[16]
+      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
+  else:
+      print('Нет данных на этот год')
 
 def fullscreen(event):
     global is_fullscreen
@@ -197,12 +225,12 @@ def GTU_info (num, wt, prcnt, hTO, hKR, state):
 GTU_info (6, 1, 1, 1, 1, 1)
 
 # Котлы
-marginB = w * 0.08  # Отступы
+marginB = w * 0.02  # Отступы
 sizeB = w * 0.09  # Размер
 num_blr = 6 # Кол-во котлов
 widthB = num_blr * sizeB + (num_blr - 1) * marginB #Расчитываем ширину
 
-xB = (w - widthB) / 2       # Начальная координата X
+xB = xG      # Начальная координата X
 yB = w * 0.26     # Начальная координата Y
 
 boiler_on = load_scaled_image("img/Boiler_on.png", sizeG)
