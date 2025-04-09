@@ -78,6 +78,7 @@ def open_excel_files():
 
         showinfo("Успех!", "Файлы успешно загружены!")
         set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
+        boilers_initialization()
 
 
     except Exception as e:
@@ -113,7 +114,7 @@ def price_calc():
 
     # Вывод в терминал
     if price != 0:
-        return(f'Стоимость газа на {current_day}.{current_month}.{current_year} = {price / 1000:.3f} руб/тыс.м3')
+        return(f'Стоимость газа на {current_day}.{current_month}.{current_year} = {price:.3f} руб/тыс.м³')
     else:
         return(f'Нет данных для расчета стоимости газа за {current_month}.{current_year}')
 
@@ -139,18 +140,21 @@ def next_date():
     current_date += timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
+    boilers_initialization()
 
 def previous_date():
     global current_date
     current_date -= timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
+    boilers_initialization()
 
 def next_month():
     global current_date
     current_date += relativedelta(months=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
+    boilers_initialization()
 
 def previous_month():
     global current_date
@@ -314,8 +318,7 @@ def temp_of_month():
 def boilers_initialization():
     # Инициализация котлов
     boilers = [UtilizationBoiler(i) for i in range(6)]
-    for boiler in boilers:
-        print(boiler)
+    
 
     temp = temp_of_month()
 
@@ -349,6 +352,9 @@ def boilers_initialization():
     # Вывод информации о каждом котле после расчета
     for boiler in boilers:
         print(boiler)
+        BLR_info(boiler.num + 1, boiler.load, boiler.pwr, boiler.status)
+
+
 
 ###################################################################################
 price = None
@@ -439,12 +445,24 @@ GTU_huds = {
 }
 
 # Функция для отображения текста в нужных ГТУ
-def GTU_info (num, wt, prcnt, hTO, hKR, state):
+def GTU_info(num, wt, prcnt, hTO, hKR, state):
+    
+    canvas.delete(f"gtu_{num}")  # Общий тег для всех элементов
+   
+    text_x, text_y = GTU_huds[num]["coords"]
+    text_x += (w * 0.005)
+    text_y += (w * 0.003)
+    
 
-    center_x, center_y = GTU_huds[num]["coords"]
-    center_x += (w * 0.005)
-    center_y += (w * 0.003)
-
+    img_x, img_y = GTU_dict[num]["coords"]
+    
+ 
+    if state == "on":
+        canvas.create_image(img_x, img_y, image=gtu_on, anchor="nw", tags=f"gtu_{num}")
+    elif state == "off":
+        canvas.create_image(img_x, img_y, image=gtu_off, anchor="nw", tags=f"gtu_{num}")
+    elif state == "repair":
+        canvas.create_image(img_x, img_y, image=gtu_repair, anchor="nw", tags=f"gtu_{num}")
     
     lines = [
         f"Номер ГТУ: {num}",
@@ -453,27 +471,17 @@ def GTU_info (num, wt, prcnt, hTO, hKR, state):
         f"Моточасы до ТО: {hTO}ч",
         f"Моточасы до КР: {hKR}ч",
     ]
-    line_height = int(w * 0.015)  # Высота строки
-
+    
     for i, line in enumerate(lines):
         canvas.create_text(
-            center_x,
-            center_y + i * line_height,
+            text_x,
+            text_y + i * int(w * 0.015),
             text=line,
             anchor="nw",
             fill="white",
-            font=("Arial", int(h*0.01))
+            font=("Arial", int(h*0.01)),
+            tags=f"gtu_{num}" 
         )
-    x, y = GTU_dict[num]["coords"]
-    if state == "on":
-        canvas.create_image(x, y, image=gtu_on, anchor="nw")
-    elif state == "off":
-        canvas.create_image(x, y, image=gtu_off, anchor="nw")
-    elif state == "repair":
-        canvas.create_image(x, y, image=gtu_repair, anchor="nw")
-    
-GTU_info (6, 1, 1, 1, 1, "off")
-
 
 # Котлы
 marginB = w * 0.02  # Отступы
@@ -550,44 +558,38 @@ BLR_huds = {
 
 # Функция для отображения текста в нужных ГТУ
 def BLR_info(num, prcnt, pwr, state):
-    # Удаляем ВЕСЬ старый текст этого ГТУ по единому тегу
-    canvas.delete(f"gtu_text_{num}")
+
+    canvas.delete(f"blr_{num}")
+
+    img_x, img_y = BLR_dict[num]["coords"]
     
-    # Получаем координаты
-    center_x, center_y = BLR_huds[num]["coords"]
-    center_x += (w * 0.005)
-    center_y += (w * 0.003)
+    # Координаты для текста
+    text_x, text_y = BLR_huds[num]["coords"]
+    text_x += (w * 0.005)
+    text_y += (w * 0.003)
     
+    if state:  # True или "on"
+        canvas.create_image(img_x, img_y, image=boiler_on, anchor="nw", tags=f"blr_{num}")
+    else:  # False или "off"
+        canvas.create_image(img_x, img_y, image=boiler_off, anchor="nw", tags=f"blr_{num}")
+
     lines = [
         f"Номер котла: {num}",
         f"Уровень загрузки: {prcnt}%",
-        f"Мощность: {pwr}Квт"
+        f"Мощность: {pwr}Гкал"
     ]
     
-    # Создаем весь текст с ОДНИМ ОБЩИМ ТЕГОМ
     for i, line in enumerate(lines):
         canvas.create_text(
-            center_x,
-            center_y + i * int(w * 0.015),
+            text_x,
+            text_y + i * int(w * 0.015),
             text=line,
             anchor="nw",
             fill="white",
             font=("Arial", int(h*0.01)),
-            tags=f"gtu_text_{num}"  # Единый тег для всех строк
+            tags=f"blr_{num}"  # Тот же тег
         )
-    
-    x, y = BLR_dict[num]["coords"]
-    if state == "on":
-        canvas.create_image(x, y, image=boiler_on, anchor="nw")
-    elif state == "off":
-        canvas.create_image(x, y, image=boiler_off, anchor="nw")
 
-BLR_info(3, 145, 1337, "off")
-BLR_info(1, 175, 775, "on")
-BLR_info(2, 100, 478, "off")
-BLR_info(4, 188, 1366, "off")
-BLR_info(5, 199, 2011, "on")
-BLR_info(6, 144, 1151, "on")
 
 # Константы для кнопок управления датой
 BUTTON_WIDTH = 17  # Ширина в символах
