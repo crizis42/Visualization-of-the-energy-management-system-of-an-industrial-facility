@@ -68,7 +68,7 @@ def load_scaled_image(path, size):
     return ImageTk.PhotoImage(img)
 
 def update_label():
-    label.config(text=current_date.strftime("%d.%m.%Y"))
+    label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 20))
 
 def next_date():
     global current_date
