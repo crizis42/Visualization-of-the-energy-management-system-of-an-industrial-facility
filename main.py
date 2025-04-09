@@ -108,22 +108,22 @@ GTU_hud7 = canvas.create_rectangle(xG + (sizeG + marginG)*6, yG + shiftG, xG + s
 GTU_hud8 = canvas.create_rectangle(xG + (sizeG + marginG)*7, yG + shiftG, xG + sizeG + (sizeG + marginG)*7, yG + shiftG + sizeG, outline=colorG, width=widthG)
 GTU_hud9 = canvas.create_rectangle(xG + (sizeG + marginG)*8, yG + shiftG, xG + sizeG + (sizeG + marginG)*8, yG + shiftG + sizeG, outline=colorG, width=widthG)
 
-center_x = xG + sizeG / 2
-center_y = (yG + shiftG) + sizeG / 2
+center_x = xG + (w * 0.005)
+center_y = yG + shiftG + (w * 0.003)
 
 # Создаем текст по центру первого прямоугольника
 canvas.create_text(
     center_x, 
     center_y,
     text="номер ГТУ: \n\
-номинальная мощность: \n\
+номинальная W: \n\
 уровень загрузки: \n\
 моточасы до ТО: \n\
 моточасы до КР: \n\
 состояние:",  # Ваш текст
-    anchor="center",        # Центрирование относительно точки
+    anchor="nw",        # Центрирование относительно точки
     fill="white",           # Цвет текста
-    font=("Arial", 10)      # Шрифт и размер (опционально)
+    font=("Arial", int(w*0.007))      # Шрифт и размер (опционально)
 )
 
 # Котлы
