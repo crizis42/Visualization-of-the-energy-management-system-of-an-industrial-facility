@@ -12,6 +12,9 @@ from tkinter.messagebox import showinfo, showerror
 from PIL import Image, ImageTk
 
 
+# Глобальные переменные для моточасов из Excel
+initial_to_hours = []
+initial_kr_hours = []
 
 is_fullscreen = False
 root = Tk()
@@ -72,6 +75,19 @@ def open_excel_files():
         m_to_hours = numpy.where(m_hours > 1500, m_hours % 1500, m_hours)
         m_kr_hours = numpy.where(m_hours > 10000, m_hours % 10000, m_hours)
         m_hours = numpy.round(m_hours, 3)
+
+        global initial_to_hours, initial_kr_hours, gtes
+
+        initial_to_hours = m_to_hours.copy()
+        initial_kr_hours = m_kr_hours.copy()
+
+        # Создаём список объектов GTU по числу данных
+        gtes = [GTU(i) for i in range(len(m_hours))]
+
+        # Присваиваем каждому GTU его начальные данные
+        for idx, gtu in enumerate(gtes):
+            gtu.to = initial_to_hours[idx]
+            gtu.kr = initial_kr_hours[idx]
 
         print("Файлы успешно загружены!")
         showinfo("Успех!", "Файлы успешно загружены!")
@@ -508,17 +524,11 @@ def get_power_loss(temp, season):
         dp.append((I)**2*3*linear_active_resistance[i])
     
     return sum(dp)
-    
+
 
 def gtu_initialization():
     global m_to_hours, m_kr_hours
 
-    gtes = [GTU(i) for i in range(9)]
-
-# Присваиваем каждому ГТУ его данные
-    for idx, gtu in enumerate(gtes):
-        gtu.to = m_to_hours[idx]
-        gtu.kr = m_kr_hours[idx]
 
     current_datetime = current_date # текущая дата
     custom_datetime_1 = 6
