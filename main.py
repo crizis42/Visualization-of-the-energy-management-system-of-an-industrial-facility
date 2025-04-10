@@ -155,41 +155,47 @@ def load_scaled_image(path, size):
 def update_label():
     date_label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 14, 'bold'))
 
+LastButton = None
+
 def next_date():
-    global current_date, previous_date_for_gtu
+    global current_date, previous_date_for_gtu, LastButton
     current_date += timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
     previous_date_for_gtu = current_date
+    LastButton = "next_date"
 
 def previous_date():
-    global current_date, previous_date_for_gtu
+    global current_date, previous_date_for_gtu, LastButton
     current_date -= timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
     previous_date_for_gtu = current_date
+    LastButton = "previous_date"
 
 def next_month():
-    global current_date, previous_date_for_gtu
+    global current_date, previous_date_for_gtu, LastButton
     current_date += relativedelta(months=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
     previous_date_for_gtu = current_date
+    LastButton = "next_month"
 
 def previous_month():
-    global current_date, previous_date_for_gtu
+    global current_date, previous_date_for_gtu, LastButton
     current_date -= relativedelta(months=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
     previous_date_for_gtu = current_date
+    LastButton = "previous_month"
 
 class UtilizationBoiler:
     """Котел утилизатор КВ-ГМ-3,15-95.
@@ -534,10 +540,13 @@ def get_power_loss(temp, season):
     
     return sum(dp)
 
+def month_delta(start_date, end_date):
+    return (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month)
 
 def gtu_initialization():
     global m_to_hours, m_kr_hours, previous_date_for_gtu
-    time_delta = (current_date - previous_date_for_gtu).days
+    time_delta_day = (current_date - previous_date_for_gtu).days
+    time_delta_month = month_delta(previous_date_for_gtu, current_date)
 
     current_datetime = current_date # текущая дата
     custom_datetime_1 = 6
@@ -561,7 +570,7 @@ def gtu_initialization():
     hp = hourly_production(actual_loading) # определение отношения мч/ч
     engine_hpd = hp * 24 # наработка за сутки при данной нагрузке
 
-        # отключение ГТУ по состоянию
+    # отключение ГТУ по состоянию
     for gtu in gtes:
         if gtu.state == 1:
             if gtu.kr-engine_hpd-2.5 <= 0:
@@ -592,25 +601,44 @@ def gtu_initialization():
                 n += 1
 
     # обновление состояний ГТУ по прошествии дня
-    for gtu in gtes:
-        
-        
-        # Для рабочей ГТУ
-        if gtu.state == 1:
-            gtu.to -= engine_hpd * time_delta
-            gtu.kr -= engine_hpd * time_delta
-            if gtu.to < 0:
-                gtu.to = 0
-            if gtu.kr < 0:
-                gtu.kr = 0
+    if (LastButton == "next_date" or LastButton == "previous_date"):
+        for gtu in gtes:
+            
+            # Для рабочей ГТУ
+            if gtu.state == 1:
+                gtu.to -= engine_hpd * time_delta_day
+                gtu.kr -= engine_hpd * time_delta_day
+                if gtu.to < 0:
+                    gtu.to = 0
+                if gtu.kr < 0:
+                    gtu.kr = 0
 
-        #Считаем дни ремонта для ГТУ на обслуживании
-        elif gtu.state == 2:
-            gtu.service_time -= abs(time_delta)
-            if gtu.service_time == 0:
-                gtu.state = 0
-        else:
-            continue
+            #Считаем дни ремонта для ГТУ на обслуживании
+            elif gtu.state == 2:
+                gtu.service_time -= abs(time_delta_day)
+                if gtu.service_time == 0:
+                    gtu.state = 0
+            else:
+                continue
+    elif (LastButton == "next_month" or LastButton == "previous_month"):
+        for gtu in gtes:
+            
+            # Для рабочей ГТУ
+            if gtu.state == 1:
+                gtu.to -= engine_hpd * time_delta_month
+                gtu.kr -= engine_hpd * time_delta_month
+                if gtu.to < 0:
+                    gtu.to = 0
+                if gtu.kr < 0:
+                    gtu.kr = 0
+
+            #Считаем дни ремонта для ГТУ на обслуживании
+            elif gtu.state == 2:
+                gtu.service_time -= abs(time_delta_month)
+                if gtu.service_time == 0:
+                    gtu.state = 0
+            else:
+                continue
 
     for gtu in gtes:
         print(gtu)
