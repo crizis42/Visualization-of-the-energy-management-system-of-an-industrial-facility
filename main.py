@@ -691,8 +691,8 @@ def GTU_info(num, wt, prcnt, hTO, hKR, state):
     canvas.delete(f"gtu_{num}")  # Общий тег для всех элементов
    
     text_x, text_y = GTU_huds[num]["coords"]
-    text_x += (w * 0.005)
-    text_y += (w * 0.003)
+    text_x += (w * 0.002)
+    text_y += (w * 0.001)
     
 
     img_x, img_y = GTU_dict[num]["coords"]
@@ -720,7 +720,7 @@ def GTU_info(num, wt, prcnt, hTO, hKR, state):
             text=line,
             anchor="nw",
             fill="white",
-            font=("Arial", int(h*0.01)),
+            font=("Arial", int(h*0.009)),
             tags=f"gtu_{num}" 
         )
 
@@ -806,8 +806,8 @@ def BLR_info(num, prcnt, pwr, state):
     
     # Координаты для текста
     text_x, text_y = BLR_huds[num]["coords"]
-    text_x += (w * 0.005)
-    text_y += (w * 0.003)
+    text_x += (w * 0.002)
+    text_y += (w * 0.001)
     
     if state:  # True или "on"
         canvas.create_image(img_x, img_y, image=boiler_on, anchor="nw", tags=f"blr_{num}")
@@ -827,7 +827,7 @@ def BLR_info(num, prcnt, pwr, state):
             text=line,
             anchor="nw",
             fill="white",
-            font=("Arial", int(h*0.01)),
+            font=("Arial", int(h*0.009)),
             tags=f"blr_{num}"  # Тот же тег
         )
 
