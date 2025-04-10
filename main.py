@@ -690,7 +690,7 @@ def GTU_info(num, wt, prcnt, hTO, hKR, state):
     
     lines = [
         f"Номер ГТУ: {num}",
-        f"Номинальная W: {wt}Квт",
+        f"Номинальная W: {wt}Мвт",
         f"Уровень загрузки: {prcnt}%",
         f"Моточасы до ТО: {hTO}ч",
         f"Моточасы до КР: {hKR}ч",
