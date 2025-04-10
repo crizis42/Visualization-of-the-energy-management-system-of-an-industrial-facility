@@ -514,7 +514,7 @@ def gtu_initialization():
         gtu.to = random.randint(0, 1500)
         gtu.kr = random.randint(0, 10000)
 
-    current_datetime = datetime.now() # текущая дата
+    current_datetime = current_date # текущая дата
     custom_datetime_1 = 6
     custom_datetime_2 = 10
     current_season = None
@@ -578,7 +578,7 @@ def gtu_initialization():
         else:
             continue
     for gtu in gtes:
-
+        print(gtu)
         GTU_info(gtu.n + 1, gtu.power, gtu.load, f'{gtu.to:.3f}', f'{gtu.kr:.3f}', gtu.state)
 ###################################################################################
 price = None
@@ -681,9 +681,9 @@ def GTU_info(num, wt, prcnt, hTO, hKR, state):
     img_x, img_y = GTU_dict[num]["coords"]
     
  
-    if state == 0:
+    if state == 1:
         canvas.create_image(img_x, img_y, image=gtu_on, anchor="nw", tags=f"gtu_{num}")
-    elif state == 1:
+    elif state == 0:
         canvas.create_image(img_x, img_y, image=gtu_off, anchor="nw", tags=f"gtu_{num}")
     elif state == 2:
         canvas.create_image(img_x, img_y, image=gtu_repair, anchor="nw", tags=f"gtu_{num}")
