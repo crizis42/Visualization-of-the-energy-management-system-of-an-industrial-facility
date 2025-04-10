@@ -16,6 +16,11 @@ from PIL import Image, ImageTk
 initial_to_hours = []
 initial_kr_hours = []
 
+# Читаем данные
+current_date = datetime.now().date()
+# Предыдущий день для расчета моточасов
+previous_date_for_gtu = current_date
+
 is_fullscreen = False
 root = Tk()
 
@@ -58,8 +63,9 @@ def open_excel_files():
         global energy_usage_data, gtu_data, gas_data, months, gas_prices
         global m_hours, m_to_hours, m_kr_hours  # Объявляем глобальными
 
-        gtu_path = filepaths[0]
-        gas_path = filepaths[1]
+        energy_path = filepaths[0] #Добавлена загрузка трех файлов
+        gtu_path = filepaths[1]
+        gas_path = filepaths[2]
 
         gtu_data = pd.read_excel(gtu_path)
         gas_data = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
@@ -99,8 +105,7 @@ def open_excel_files():
     except Exception as e:
         showerror("Ошибка!", f"Ошибка при загрузке файлов:\n{e}")
 
-# Читаем данные
-current_date = datetime.now().date()
+
 
 def price_calc():
     global price
@@ -151,36 +156,40 @@ def update_label():
     date_label.config(text=current_date.strftime("%d.%m.%Y"), fg='white', bg='black', font=('Arial', 14, 'bold'))
 
 def next_date():
-    global current_date
+    global current_date, previous_date_for_gtu
     current_date += timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
+    previous_date_for_gtu = current_date
 
 def previous_date():
-    global current_date
+    global current_date, previous_date_for_gtu
     current_date -= timedelta(days=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
+    previous_date_for_gtu = current_date
 
 def next_month():
-    global current_date
+    global current_date, previous_date_for_gtu
     current_date += relativedelta(months=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
+    previous_date_for_gtu = current_date
 
 def previous_month():
-    global current_date
+    global current_date, previous_date_for_gtu
     current_date -= relativedelta(months=1)
     update_label()
     set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
     boilers_initialization()
     gtu_initialization()
+    previous_date_for_gtu = current_date
 
 class UtilizationBoiler:
     """Котел утилизатор КВ-ГМ-3,15-95.
@@ -527,8 +536,8 @@ def get_power_loss(temp, season):
 
 
 def gtu_initialization():
-    global m_to_hours, m_kr_hours
-
+    global m_to_hours, m_kr_hours, previous_date_for_gtu
+    time_delta = (current_date - previous_date_for_gtu).days
 
     current_datetime = current_date # текущая дата
     custom_datetime_1 = 6
@@ -584,11 +593,20 @@ def gtu_initialization():
 
     # обновление состояний ГТУ по прошествии дня
     for gtu in gtes:
+        
+        
+        # Для рабочей ГТУ
         if gtu.state == 1:
-            gtu.to -= engine_hpd
-            gtu.kr -= engine_hpd
+            gtu.to -= engine_hpd * time_delta
+            gtu.kr -= engine_hpd * time_delta
+            if gtu.to < 0:
+                gtu.to = 0
+            if gtu.kr < 0:
+                gtu.kr = 0
+
+        #Считаем дни ремонта для ГТУ на обслуживании
         elif gtu.state == 2:
-            gtu.service_time -= 1
+            gtu.service_time -= abs(time_delta)
             if gtu.service_time == 0:
                 gtu.state = 0
         else:
