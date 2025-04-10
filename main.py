@@ -46,37 +46,39 @@ w = work_width
 h = work_height #Переопределение рабочей области
 
 def open_excel_files():
-    filepaths = askopenfilenames(filetypes=[("Excel files", "*.xlsx")])  # Выбираем только .xlsx файлы
+    filepaths = askopenfilenames(filetypes=[("Excel files", "*.xlsx")])
 
     if not filepaths:
-        return  # Если ничего не выбрали — выходим из функции
+        return  
 
     try:
-        # Объявляем переменные глобальными
         global energy_usage_data, gtu_data, gas_data, months, gas_prices
+        global m_hours, m_to_hours, m_kr_hours  # Объявляем глобальными
 
-        # Пути к выбранным файлам
         gtu_path = filepaths[0]
         gas_path = filepaths[1]
 
-        # Загружаем данные
         gtu_data = pd.read_excel(gtu_path)
         gas_data = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
 
-        # Обработка файла с ценами на газ
-        last_col = gas_data.loc[2, 1:].last_valid_index()  # Последняя заполненная колонка
-        months = gas_data.loc[0, 1:last_col].to_numpy()    # Месяцы
-        gas_prices = gas_data.loc[2, 1:last_col].to_numpy()  # Цены на газ
+        # Обработка газовых цен
+        last_col = gas_data.loc[2, 1:].last_valid_index()
+        months = gas_data.loc[0, 1:last_col].to_numpy()
+        gas_prices = gas_data.loc[2, 1:last_col].to_numpy()
+
+        # Расчет моточасов только при загрузке файлов
+        last_col_index = gtu_data.columns[-1]
+        m_hours = gtu_data.loc[3:, last_col_index].dropna().to_numpy(dtype=float)
+        m_to_hours = numpy.where(m_hours > 1500, m_hours % 1500, m_hours)
+        m_kr_hours = numpy.where(m_hours > 10000, m_hours % 10000, m_hours)
+        m_hours = numpy.round(m_hours, 3)
 
         print("Файлы успешно загружены!")
-        print("gtu_data:\n", gtu_data.head())
-        print("gas_prices:\n", gas_prices)
-
         showinfo("Успех!", "Файлы успешно загружены!")
+
         set_status_message(f"СИСТЕМА В РАБОТЕ\n\n{price_calc()}")
         boilers_initialization()
         gtu_initialization()
-
 
     except Exception as e:
         showerror("Ошибка!", f"Ошибка при загрузке файлов:\n{e}")
@@ -506,13 +508,17 @@ def get_power_loss(temp, season):
         dp.append((I)**2*3*linear_active_resistance[i])
     
     return sum(dp)
+    
 
 def gtu_initialization():
-    gtes = [GTU(i) for i in range(9)] # задаётся из файла
+    global m_to_hours, m_kr_hours
 
-    for gtu in gtes:
-        gtu.to = random.randint(0, 1500)
-        gtu.kr = random.randint(0, 10000)
+    gtes = [GTU(i) for i in range(9)]
+
+# Присваиваем каждому ГТУ его данные
+    for idx, gtu in enumerate(gtes):
+        gtu.to = m_to_hours[idx]
+        gtu.kr = m_kr_hours[idx]
 
     current_datetime = current_date # текущая дата
     custom_datetime_1 = 6
@@ -577,6 +583,7 @@ def gtu_initialization():
                 gtu.state = 0
         else:
             continue
+
     for gtu in gtes:
         print(gtu)
         GTU_info(gtu.n + 1, gtu.power, gtu.load, f'{gtu.to:.3f}', f'{gtu.kr:.3f}', gtu.state)

@@ -1,40 +1,25 @@
 import pandas as pd
-import numpy as np
+import numpy
 from datetime import datetime
 
-gas_path = 'Excel/3_Стоимость_СОГ.xlsx'
+gtu_path = 'Excel/2_Наработка_ГТЭС.xlsx'
 
 # Читаем данные
-df = pd.read_excel(gas_path, sheet_name='Лист1', header=None)
+gtu_data = pd.read_excel(gtu_path, sheet_name='Лист1', header=None)
 
-# Определяем количество столбцов с данными (строка 2 начиная с колонки 1)
-last_col = df.loc[2, 1:].last_valid_index()  # Последняя не пустая колонка
+last_col = gtu_data.columns[-1]
+last_row = gtu_data.loc[3:,2].last_valid_index()
+m_hours = gtu_data.loc[4:, last_col].to_numpy(dtype=float)
+m_to_hours = numpy.where(m_hours > 1500, m_hours % 1500, m_hours)
+m_kr_hours = numpy.where(m_hours > 10000, m_hours % 10000, m_hours)
 
-# Получаем месяцы и цены
-months = df.loc[0, 1:last_col].to_numpy()
-gas_prices = df.loc[2, 1:last_col].to_numpy()
+m_hours = numpy.round(m_hours, 3)
 
-# Текущая дата
-now = datetime.now()
-current_month = now.month
-current_year = 2024
+print(last_row)
+print(m_hours)
+print(m_to_hours)
+print(m_kr_hours)
+print(11023.34%10000)
 
-# Получение цены
-price = None
-def price_calc(current_year, current_month, months, gas_prices, price):
-  if current_year == 2024:
-      if current_month <= len(gas_prices):
-          price = gas_prices[current_month - 1]
-          print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-      else:
-          print('Нет данных на этот месяц')
-  elif current_year == 2025:
-      price = gas_prices[15]
-      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-  elif current_year == 2026:
-      price = gas_prices[16]
-      print(f'Стоимость газа за {current_month}.{current_year} = {price/1000} руб/тыс.м3')
-  else:
-      print('Нет данных на этот год')
-
-price_calc(current_year, current_month, months, gas_prices, price)
+gtes = [i for i in range(len(m_hours))]
+print(enumerate(gtes))
